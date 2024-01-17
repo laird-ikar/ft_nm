@@ -2,7 +2,7 @@ NAME		=	ft_nm
 
 SRCS_DIR	=	srcs/
 INCS_DIR	=	incs/
-LIBS_DIR	=	libs/
+LIBS_DIR	=
 
 SOURCES		=
 LIBRARIES	=	libft
