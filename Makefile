@@ -1,10 +1,10 @@
 NAME		=	ft_nm
 
 SRCS_DIR	=	srcs/
-INCS_DIR	=	incs/
+INCS_DIR	=	incs/ libft/
 LIBS_DIR	=
 
-SOURCES		=
+SOURCES		=	ft_nm init print_messages parse_file
 LIBRARIES	=	libft
 
 LIBS		= $(foreach lib, $(LIBRARIES), $(LIBS_DIR)$(lib)/$(lib).a)
@@ -14,7 +14,7 @@ OBJS		= $(SRCS:.c=.o)
 SILENCER	=
 
 CC			=	$(SILENCER)cc
-CFLAGS		=	-I $(LIBS_DIR)
+CFLAGS		=	$(addprefix -I, $(INCS_DIR))
 
 RM			= $(SILENCER)rm -rf
 
