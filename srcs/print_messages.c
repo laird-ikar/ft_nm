@@ -6,7 +6,7 @@
 /*   By: bguyot <bguyot@student.42mulhouse.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 12:09:00 by bguyot            #+#    #+#             */
-/*   Updated: 2024/01/18 17:49:06 by bguyot           ###   ########.fr       */
+/*   Updated: 2024/01/23 15:35:50 by bguyot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,8 +56,6 @@ void	print_help_message(void)
 
 void	print_supported_target_message(void)
 {
-	size_t	i;
-
 	ft_printf("nm: supported targets:");
 	ft_printf("\n");
 }
