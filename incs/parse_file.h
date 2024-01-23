@@ -6,7 +6,7 @@
 /*   By: bguyot <bguyot@student.42mulhouse.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 16:59:17 by bguyot            #+#    #+#             */
-/*   Updated: 2024/01/23 15:20:01 by bguyot           ###   ########.fr       */
+/*   Updated: 2024/01/23 18:09:30 by bguyot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ typedef struct s_sh_info
 {
 	int			error_code;
 	uintptr_t	offset;
+	uintptr_t	current_offset;
 	uint16_t	entry_size;
 	uint16_t	number;
 	uint16_t	section_name_index;
