@@ -6,7 +6,7 @@
 /*   By: bguyot <bguyot@student.42mulhouse.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 16:55:21 by bguyot            #+#    #+#             */
-/*   Updated: 2024/01/24 18:02:05 by bguyot           ###   ########.fr       */
+/*   Updated: 2024/01/24 18:08:24 by bguyot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,6 +122,7 @@ char	*get_strtab_elem
 }
 
 int	parse_file(char *path, uint8_t flags, int has_to_print_name)
+// TODO: refacto that shit
 {
 	char		*data;
 	int			data_size;
@@ -188,13 +189,12 @@ int	parse_file(char *path, uint8_t flags, int has_to_print_name)
 			nb_entry = symtab_size / symtab_entrysize;
 			while (--nb_entry)
 			{
+				// TODO: change direct print for a storage: need to sort and filter that shit
 				sh_infos.section_name_index = link;
-				ft_printf("st_name: %u\n", read_uint32(ptr, endian));
-				if (read_uint32(ptr, endian))
-					ft_printf("name: %s\n", get_strtab_elem(data, sh_infos, read_uint32(ptr, endian), data_size, bits, endian));
-				else
-					ft_printf("name: NO_NAME\n");
-
+				ft_printf("%016lx %c %s\n",
+					0l, //TODO: get value
+					'x', //TODO:L get type
+					get_strtab_elem(data, sh_infos, read_uint32(ptr, endian), data_size, bits, endian));
 				ptr += symtab_entrysize;
 			}
 		}
