@@ -1,20 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_data.c                                         :+:      :+:    :+:   */
+/*   ft_nm.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bguyot <bguyot@student.42mulhouse.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/23 11:54:30 by bguyot            #+#    #+#             */
-/*   Updated: 2024/01/24 15:11:33 by bguyot           ###   ########.fr       */
+/*   Created: 2024/01/24 10:16:32 by bguyot            #+#    #+#             */
+/*   Updated: 2024/01/24 10:17:14 by bguyot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <get_data.h>
+#ifndef FT_NM_H
+# define FT_NM_H
 
-char	*get_data(char *data, int offset, int len, int size)
-{
-	if (offset + len > size)
-		return (NULL);
-	return (data + offset);
-}
+#include <t_nm.h>
+#include <init.h>
+#include <libft.h>
+#include <print_messages.h>
+#include <parse_file.h>
+#include <libft.h>
+
+#endif

@@ -6,7 +6,7 @@
 /*   By: bguyot <bguyot@student.42mulhouse.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 16:59:17 by bguyot            #+#    #+#             */
-/*   Updated: 2024/01/23 18:09:30 by bguyot           ###   ########.fr       */
+/*   Updated: 2024/01/24 15:16:14 by bguyot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,8 @@ enum e_bits
 	FT_B32 = 1,
 	FT_B64 = 2,
 };
+
+#define	SYMTAB_TAG	0x2
 
 typedef struct s_sh_info
 {
