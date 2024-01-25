@@ -6,7 +6,7 @@
 /*   By: bguyot <bguyot@student.42mulhouse.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 16:55:21 by bguyot            #+#    #+#             */
-/*   Updated: 2024/01/24 18:08:24 by bguyot           ###   ########.fr       */
+/*   Updated: 2024/01/25 16:28:46 by bguyot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,6 +121,19 @@ char	*get_strtab_elem
 	return (ptr + offset);
 }
 
+static
+char	generate_symbol(uint8_t info, uint16_t shndx)
+{
+	uint8_t	symbol_type;
+	uint8_t	symbol_bind;
+
+	symbol_type  = info & 0xf;
+	symbol_bind  = info >> 4;
+	if (symbol_type == STT_NOTYPE && shndx == SHN_UNDEF)
+		return 'U';
+	return '?';
+}
+
 int	parse_file(char *path, uint8_t flags, int has_to_print_name)
 // TODO: refacto that shit
 {
@@ -189,12 +202,16 @@ int	parse_file(char *path, uint8_t flags, int has_to_print_name)
 			nb_entry = symtab_size / symtab_entrysize;
 			while (--nb_entry)
 			{
+				uint64_t	value = read_uint64(ptr + 0x08, endian);
+				char		*name = get_strtab_elem(data, sh_infos, read_uint32(ptr, endian), data_size, bits, endian);
+				uint8_t		info = *(ptr + 0x04);
+				uint16_t	shndx = read_uint16(ptr + 0x06, endian);
+				char		symbol = generate_symbol(info, shndx);
+
+
 				// TODO: change direct print for a storage: need to sort and filter that shit
 				sh_infos.section_name_index = link;
-				ft_printf("%016lx %c %s\n",
-					0l, //TODO: get value
-					'x', //TODO:L get type
-					get_strtab_elem(data, sh_infos, read_uint32(ptr, endian), data_size, bits, endian));
+				ft_printf("%016lx %c %s\n", value, info, name);
 				ptr += symtab_entrysize;
 			}
 		}
