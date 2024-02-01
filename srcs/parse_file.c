@@ -6,7 +6,7 @@
 /*   By: bguyot <bguyot@student.42mulhouse.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 16:55:21 by bguyot            #+#    #+#             */
-/*   Updated: 2024/02/01 15:59:16 by bguyot           ###   ########.fr       */
+/*   Updated: 2024/02/01 16:02:50 by bguyot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -224,6 +224,8 @@ int	is_extern(t_symbol symbol)
 	return (is_undefined(symbol) ||
 		symbol.symbol == 'T' ||
 		symbol.symbol == 'B' ||
+		symbol.symbol == 'W' ||
+		symbol.symbol == 'R' ||
 		symbol.symbol == 'D'
 	);
 }
