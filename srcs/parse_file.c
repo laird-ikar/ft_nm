@@ -6,7 +6,7 @@
 /*   By: ***REMOVED*** <***REMOVED***@***REMOVED***>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 16:55:21 by ***REMOVED***            #+#    #+#             */
-/*   Updated: 2024/01/23 18:08:40 by ***REMOVED***           ###   ########.fr       */
+/*   Updated: 2024/01/24 15:41:07 by ***REMOVED***           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ t_sh_info get_section_header_infos
 }
 
 static
-char	*get_section_name
+char	*get_strtab_elem
 	(
 		char *data,
 		t_sh_info sh_info,
@@ -116,6 +116,8 @@ char	*get_section_name
 		len = read_uint32(ptr + 0x14, endian);
 	}
 	ptr = get_data(data, str_offset, len, data_size);;
+	if (!ptr)
+		return (NULL);
 	return (ptr + offset);
 }
 
@@ -153,16 +155,27 @@ int	parse_file(char *path, uint8_t flags, int has_to_print_name)
 			ft_printf("nm: %s: Improper file format\n", path);
 			return (1);
 		}
-		ft_printf("%s: 0x%X\n",
-			get_section_name(
-				data,
-				sh_infos,
-				read_uint32(ptr, endian),
-				data_size,
-				bits, endian
-			),
-			read_uint32(ptr + 0x04, endian)
-		);
+		if (read_uint32(ptr + 0x04, endian) == SYMTAB_TAG)
+		{
+			uint64_t	symtab_offset;
+			uint64_t	symtab_size;
+			uint64_t	symtab_entrysize;
+
+			if (bits == FT_B64)
+			{
+				symtab_offset = read_uint64(ptr + 0x18, endian);
+				symtab_size = read_uint64(ptr + 0x20, endian);
+				symtab_entrysize = read_uint64(ptr + 0x38, endian);
+			}
+			else
+			{
+				symtab_offset = read_uint32(ptr + 0x10, endian);
+				symtab_size = read_uint32(ptr + 0x14, endian);
+				symtab_entrysize = read_uint32(ptr + 0x24, endian);
+			}
+			ft_printf("name: %s\n", get_strtab_elem(data, sh_infos, read_uint16(ptr, endian), data_size, bits, endian));
+			ft_printf("offset: %p, size: %p, entry_size: %p\n", (void *) symtab_offset, (void *) symtab_size, (void *) symtab_entrysize);
+		}
 		sh_infos.current_offset += sh_infos.entry_size;
 	}
 	munmap(data, data_size);

@@ -1,25 +1,40 @@
-NAME		=	ft_nm
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: ***REMOVED*** <***REMOVED***@***REMOVED***>      +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2024/01/24 15:05:38 by ***REMOVED***            #+#    #+#              #
+#    Updated: 2024/01/24 15:09:20 by ***REMOVED***           ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
 
-SRCS_DIR	=	srcs/
-INCS_DIR	=	incs/ libft/
-LIBS_DIR	=
+NAME			=	ft_nm
 
-SOURCES		=	ft_nm init print_messages parse_file read_int get_data
-LIBRARIES	=	libft
+SRCS_DIR		=	srcs/
+INCS_DIR		=	incs/
+LIBS_DIR		=
+LIBS_INCS_DIR	=	libft/
 
-LIBS		= $(foreach lib, $(LIBRARIES), $(LIBS_DIR)$(lib)/$(lib).a)
-SRCS		= $(addprefix $(SRCS_DIR), $(addsuffix .c, $(SOURCES)))
-OBJS		= $(SRCS:.c=.o)
+SOURCES			=	ft_nm init print_messages parse_file read_int get_data
+INCLUDES		=	status t_nm t_target
+LIBRARIES		=	libft
 
-SILENCER	=
+LIBS			=	$(foreach lib, $(LIBRARIES), $(LIBS_DIR)$(lib)/$(lib).a)
+SRCS			=	$(addprefix $(SRCS_DIR), $(addsuffix .c, $(SOURCES)))
+INCS			=	$(addprefix $(INCS_DIR), $(addsuffix .h, $(SOURCES) $(INCLUDES)))
+OBJS			=	$(SRCS:.c=.o)
 
-CC			=	$(SILENCER)cc
-CFLAGS		=	-Wall -Werror -Wextra $(addprefix -I, $(INCS_DIR))
-DEBUG_FLAGS	=	-g3 # -fsanitize=address
+SILENCER		=
 
-RM			= $(SILENCER)rm -rf
+CC				=	$(SILENCER)cc
+CFLAGS			=	-Wall -Werror -Wextra $(addprefix -I, $(INCS_DIR) $(addprefix $(LIBS_DIR), $(LIBS_INCS_DIR)))
+DEBUG_FLAGS		=	-g3 # -fsanitize=address
 
-all:		$(NAME)
+RM				= $(SILENCER)rm -rf
+
+all:			$(NAME)
 
 clean:
 	$(foreach path, $(LIBRARIES), $(MAKE) -C $(LIBS_DIR)$(path) clean ;)
@@ -28,18 +43,18 @@ clean:
 fclean: clean
 	$(RM) $(NAME)
 
-re: 		fclean all
+re: 			fclean all
 
-$(NAME):	$(OBJS) $(LIBS)
-	$(CC) $(CFLAGS) $^ -o $@
+$(NAME):		$(INCS) $(OBJS) $(LIBS)
+	$(CC) $(CFLAGS) $(OBJS) $(LIBS) -o $@
 
-debug:		CFLAGS+=$(DEBUG_FLAGS)
-debug:		$(NAME)
+debug:			CFLAGS+=$(DEBUG_FLAGS)
+debug:			re
 
 libs/libft/libft.a:
 	$(MAKE) -C libs/libft
 
-%.o:		%.c
+%.o:			%.c
 	$(CC) $(CFLAGS) $^ -c -o $@
 
 .PHONY: all clean fclean re debug

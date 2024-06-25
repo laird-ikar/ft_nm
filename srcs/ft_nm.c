@@ -6,16 +6,11 @@
 /*   By: ***REMOVED*** <***REMOVED***@***REMOVED***>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/17 11:32:36 by ***REMOVED***            #+#    #+#             */
-/*   Updated: 2024/01/22 10:25:00 by ***REMOVED***           ###   ########.fr       */
+/*   Updated: 2024/01/24 10:17:09 by ***REMOVED***           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <t_nm.h>
-#include <init.h>
-#include <libft.h>
-#include <print_messages.h>
-#include <parse_file.h>
-#include <libft.h>
+#include <ft_nm.h>
 
 static
 int	parse_files(t_nm *nm);
