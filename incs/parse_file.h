@@ -6,7 +6,7 @@
 /*   By: ***REMOVED*** <***REMOVED***@***REMOVED***>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 16:59:17 by ***REMOVED***            #+#    #+#             */
-/*   Updated: 2024/01/31 17:53:23 by ***REMOVED***           ###   ########.fr       */
+/*   Updated: 2024/02/01 10:18:28 by ***REMOVED***           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 #include <get_data.h>
 #include <read_int.h>
+#include <t_nm.h>
 
 #include <fcntl.h>
 #include <unistd.h>

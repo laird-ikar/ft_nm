@@ -6,7 +6,7 @@
 /*   By: ***REMOVED*** <***REMOVED***@***REMOVED***>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 16:55:21 by ***REMOVED***            #+#    #+#             */
-/*   Updated: 2024/01/31 18:15:58 by ***REMOVED***           ###   ########.fr       */
+/*   Updated: 2024/02/01 15:45:16 by ***REMOVED***           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -207,9 +207,67 @@ void	add_symbol(char *name, char symbol, uint64_t value, t_symbol_array array)
 }
 
 static
-void	print_symbols(t_symbol_array array,uint8_t flags, int has_to_print_name)
+int	is_undefined(t_symbol symbol)
 {
-	//todo:
+	return (symbol.symbol == 'U' ||
+		symbol.symbol == 'u' ||
+		symbol.symbol == 'V' ||
+		symbol.symbol == 'v' ||
+		symbol.symbol == 'W' ||
+		symbol.symbol == 'w'
+	);
+}
+
+static
+int	is_extern(t_symbol symbol)
+{
+	return (is_undefined(symbol) ||
+		symbol.symbol == 'T' ||
+		symbol.symbol == 'B' ||
+		symbol.symbol == 'D'
+	);
+}
+
+static
+int	is_normal(t_symbol symbol)
+{
+	return (!is_extern(symbol));
+}
+
+static
+void	print_symbol(t_symbol symbol)
+{
+	if (symbol.value == 0 && symbol.symbol != 'a')
+		ft_printf("%16s %c %s", "", symbol.symbol, symbol.name);
+	else
+		ft_printf("%016lx %c %s", symbol.value, symbol.symbol, symbol.name);
+}
+
+static
+void	print_symbols(t_symbol_array array, uint8_t flags, int has_to_print_name, char *path)
+{
+	int	i;
+
+	if (!(flags & P_FLAG))
+	{
+		// TODO: sort symbols
+		if (flags & R_FLAG)
+			; //TODO: reverse order
+	}
+	if (has_to_print_name)
+		ft_printf("\n %s:", path);
+	i = 0;
+	while (i < array.size)
+	{
+		if (
+			is_undefined(array.array[i]) ||
+				((flags & A_FLAG) && !(flags & U_FLAG) && !(flags & G_FLAG)) ||
+				(is_extern(array.array[i]) && !(flags & U_FLAG)) ||
+				(is_normal(array.array[i]) && !(flags & A_FLAG) && !(flags & U_FLAG) && !(flags & G_FLAG))
+		)
+			print_symbol(array.array[i]);
+		i++;
+	}
 }
 
 int	parse_file(char *path, uint8_t flags, int has_to_print_name)
@@ -228,7 +286,7 @@ int	parse_file(char *path, uint8_t flags, int has_to_print_name)
 		return (1);
 	if (ft_memcmp(data, "\x7f""ELF", 4))
 	{
-		ft_printf("nm: %s: File format not recognized\n", path);
+		ft_printf("ft_nm: %s: File format not recognized\n", path);
 		return (1);
 	}
 	bits = get_data(data, 0x04, 1, data_size)[0];
@@ -237,7 +295,7 @@ int	parse_file(char *path, uint8_t flags, int has_to_print_name)
 	if (section_table_info.error_code < 0)
 	{
 		// TODO: check this type of error with true nm
-		ft_printf("nm: %s: Improper file format\n", path);
+		ft_printf("ft_nm: %s: Improper file format\n", path);
 		return (1);
 	}
 	while (--(section_table_info.number))
@@ -246,7 +304,7 @@ int	parse_file(char *path, uint8_t flags, int has_to_print_name)
 		if (!ptr)
 		{
 			// TODO: check this type of error with true nm
-			ft_printf("nm: %s: Improper file format\n", path);
+			ft_printf("ft_nm: %s: Improper file format\n", path);
 			return (1);
 		}
 		if (read_uint32(ptr + 0x04, endian) == SHT_SYMTAB)
@@ -276,7 +334,7 @@ int	parse_file(char *path, uint8_t flags, int has_to_print_name)
 			if (!ptr_symbol)
 			{
 				// TODO: check this type of error with true nm
-				ft_printf("nm: %s: Improper file format\n", path);
+				ft_printf("ft_nm: %s: Improper file format\n", path);
 				return (1);
 			}
 			nb_entry = symtab_size / symtab_entrysize;
@@ -311,7 +369,7 @@ int	parse_file(char *path, uint8_t flags, int has_to_print_name)
 		}
 		section_table_info.current_offset += section_table_info.entry_size;
 	}
-	print_symbols(symbol_array, flags, has_to_print_name);
+	print_symbols(symbol_array, flags, has_to_print_name, path);
 	munmap(data, data_size);
 	free(symbol_array.array);
 	return (0);
