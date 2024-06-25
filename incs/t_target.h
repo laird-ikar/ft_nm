@@ -6,7 +6,7 @@
 /*   By: ***REMOVED*** <***REMOVED***@***REMOVED***>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 14:40:21 by ***REMOVED***            #+#    #+#             */
-/*   Updated: 2024/01/18 16:53:10 by ***REMOVED***           ###   ########.fr       */
+/*   Updated: 2024/01/18 17:48:35 by ***REMOVED***           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,5 @@
 typedef struct {
 	char	name[64];
 }	t_target;
-
-const size_t	g_nb_supported_targets = 0;
-const t_target	g_supported_target[] = {};
 
 #endif
