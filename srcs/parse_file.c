@@ -6,7 +6,7 @@
 /*   By: ***REMOVED*** <***REMOVED***@***REMOVED***>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 16:55:21 by ***REMOVED***            #+#    #+#             */
-/*   Updated: 2024/01/24 15:41:07 by ***REMOVED***           ###   ########.fr       */
+/*   Updated: 2024/01/24 18:02:05 by ***REMOVED***           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,7 @@ char	*get_strtab_elem
 	);
 	if (!ptr)
 		return (NULL);
-	if (bits ==FT_B64)
+	if (bits == FT_B64)
 	{
 		str_offset = read_uint64(ptr + 0x18, endian);
 		len = read_uint64(ptr + 0x20, endian);
@@ -160,21 +160,43 @@ int	parse_file(char *path, uint8_t flags, int has_to_print_name)
 			uint64_t	symtab_offset;
 			uint64_t	symtab_size;
 			uint64_t	symtab_entrysize;
+			uint64_t	nb_entry;
+			uint32_t	link;
 
 			if (bits == FT_B64)
 			{
 				symtab_offset = read_uint64(ptr + 0x18, endian);
 				symtab_size = read_uint64(ptr + 0x20, endian);
 				symtab_entrysize = read_uint64(ptr + 0x38, endian);
+				link = read_uint32(ptr + 0x28, endian);
 			}
 			else
 			{
 				symtab_offset = read_uint32(ptr + 0x10, endian);
 				symtab_size = read_uint32(ptr + 0x14, endian);
 				symtab_entrysize = read_uint32(ptr + 0x24, endian);
+				link = read_uint32(ptr + 0x18, endian);
 			}
-			ft_printf("name: %s\n", get_strtab_elem(data, sh_infos, read_uint16(ptr, endian), data_size, bits, endian));
 			ft_printf("offset: %p, size: %p, entry_size: %p\n", (void *) symtab_offset, (void *) symtab_size, (void *) symtab_entrysize);
+			ptr = get_data(data, symtab_offset, symtab_size, data_size);
+			if (!ptr)
+			{
+				// TODO: check this type of error with true nm
+				ft_printf("nm: %s: Improper file format\n", path);
+				return (1);
+			}
+			nb_entry = symtab_size / symtab_entrysize;
+			while (--nb_entry)
+			{
+				sh_infos.section_name_index = link;
+				ft_printf("st_name: %u\n", read_uint32(ptr, endian));
+				if (read_uint32(ptr, endian))
+					ft_printf("name: %s\n", get_strtab_elem(data, sh_infos, read_uint32(ptr, endian), data_size, bits, endian));
+				else
+					ft_printf("name: NO_NAME\n");
+
+				ptr += symtab_entrysize;
+			}
 		}
 		sh_infos.current_offset += sh_infos.entry_size;
 	}
