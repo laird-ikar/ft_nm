@@ -6,7 +6,7 @@
 /*   By: ***REMOVED*** <***REMOVED***@***REMOVED***>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 16:55:21 by ***REMOVED***            #+#    #+#             */
-/*   Updated: 2024/01/23 16:10:07 by ***REMOVED***           ###   ########.fr       */
+/*   Updated: 2024/01/23 18:08:40 by ***REMOVED***           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,7 @@ t_sh_info get_section_header_infos
 			return (info);
 		}
 		info.offset = read_uint64(ptr + 0x28, endian);
+		info.current_offset = read_uint64(ptr + 0x28, endian);
 		info.entry_size = read_uint16(ptr + 0x3A, endian);
 		info.number = read_uint16(ptr + 0x3C, endian);
 		info.section_name_index = read_uint16(ptr + 0x3E, endian);
@@ -72,6 +73,7 @@ t_sh_info get_section_header_infos
 			return (info);
 		}
 		info.offset = read_uint64(ptr + 0x20, endian);
+		info.current_offset = read_uint64(ptr + 0x20, endian);
 		info.entry_size = read_uint16(ptr + 0x2E, endian);
 		info.number = read_uint16(ptr + 0x30, endian);
 		info.section_name_index = read_uint16(ptr + 0x32, endian);
@@ -80,12 +82,50 @@ t_sh_info get_section_header_infos
 	return (info);
 }
 
+static
+char	*get_section_name
+	(
+		char *data,
+		t_sh_info sh_info,
+		uint16_t offset,
+		int data_size,
+		char bits,
+		char endian
+	)
+{
+	char		*ptr;
+	uintptr_t	str_offset;
+	uintptr_t	len;
+
+	ptr = get_data(
+		data,
+		sh_info.offset + sh_info.entry_size * sh_info.section_name_index,
+		sh_info.entry_size,
+		data_size
+	);
+	if (!ptr)
+		return (NULL);
+	if (bits ==FT_B64)
+	{
+		str_offset = read_uint64(ptr + 0x18, endian);
+		len = read_uint64(ptr + 0x20, endian);
+	}
+	else
+	{
+		str_offset = read_uint32(ptr + 0x10, endian);
+		len = read_uint32(ptr + 0x14, endian);
+	}
+	ptr = get_data(data, str_offset, len, data_size);;
+	return (ptr + offset);
+}
+
 int	parse_file(char *path, uint8_t flags, int has_to_print_name)
 {
-	char	*data;
-	int		data_size;
-	char	endian;
-	char	bits;
+	char		*data;
+	int			data_size;
+	char		endian;
+	char		bits;
+	t_sh_info	sh_infos;
 
 	data_size = load_file(path, &data);
 	if (data_size < 0)
@@ -97,16 +137,34 @@ int	parse_file(char *path, uint8_t flags, int has_to_print_name)
 	}
 	bits = get_data(data, 0x04, 1, data_size)[0];
 	endian = get_data(data, 0x05, 1, data_size)[0];
-	t_sh_info sh_infos
-		= get_section_header_infos(data, data_size, bits, endian);
+	sh_infos = get_section_header_infos(data, data_size, bits, endian);
 	if (sh_infos.error_code < 0)
 	{
 		// TODO: check this type of error with true nm
 		ft_printf("nm: %s: Improper file format\n", path);
 		return (1);
 	}
-	ft_printf("%p + %u * %u bits\n",
-		(void *) sh_infos.offset, sh_infos.number, sh_infos.entry_size);
+	while (--(sh_infos.number))
+	{
+		char *ptr = get_data(data, sh_infos.current_offset, sh_infos.entry_size, data_size);
+		if (!ptr)
+		{
+			// TODO: check this type of error with true nm
+			ft_printf("nm: %s: Improper file format\n", path);
+			return (1);
+		}
+		ft_printf("%s: 0x%X\n",
+			get_section_name(
+				data,
+				sh_infos,
+				read_uint32(ptr, endian),
+				data_size,
+				bits, endian
+			),
+			read_uint32(ptr + 0x04, endian)
+		);
+		sh_infos.current_offset += sh_infos.entry_size;
+	}
 	munmap(data, data_size);
 	return (0);
 	(void) flags;
