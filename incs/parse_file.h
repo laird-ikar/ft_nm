@@ -6,7 +6,7 @@
 /*   By: ***REMOVED*** <***REMOVED***@***REMOVED***>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 16:59:17 by ***REMOVED***            #+#    #+#             */
-/*   Updated: 2024/01/24 15:56:40 by ***REMOVED***           ###   ########.fr       */
+/*   Updated: 2024/01/25 16:40:23 by ***REMOVED***           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,17 +28,38 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-enum e_endians
+// INFO: https://docs.oracle.com/cd/E19683-01/816-1386/chapter6-79797/index.html
+enum	e_endians
 {
 	FT_SMALL_ENDIAN = 1,
 	FT_BIG_ENDIAN = 2,
 };
 
-enum e_bits
+enum	e_bits
 {
 	FT_B32 = 1,
 	FT_B64 = 2,
 };
+
+enum	e_symbol_types
+{
+	STT_NOTYPE = 0,
+	STT_OBJECT = 1,
+	STT_FUNC = 2,
+	STT_SECTION = 3,
+	STT_FILE = 4,
+	STT_COMMON = 5,
+	STT_LOOS = 10,
+	STT_HIOS = 12,
+	STT_LOPROC = 13,
+
+};
+
+enum	e_symbol_binds
+{};
+
+enum	e_shndx
+{};
 
 #define	SYMTAB_TAG	0x2
 
