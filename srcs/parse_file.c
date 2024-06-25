@@ -6,7 +6,7 @@
 /*   By: ***REMOVED*** <***REMOVED***@***REMOVED***>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 16:55:21 by ***REMOVED***            #+#    #+#             */
-/*   Updated: 2024/02/01 18:26:32 by ***REMOVED***           ###   ########.fr       */
+/*   Updated: 2024/02/02 12:20:07 by ***REMOVED***           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -248,6 +248,8 @@ static
 void	swap(t_symbol *a, t_symbol* b)
 {
 	t_symbol	temp;
+	ft_printf("swaping %s and %s\n\n", a->name, b->name);
+
 
 	temp = *a;
 	*a = *b;
@@ -255,38 +257,57 @@ void	swap(t_symbol *a, t_symbol* b)
 }
 
 static
-int	compare(t_symbol a_arr, t_symbol b_arr, int is_rev)
+int	compare(t_symbol a, t_symbol b, int is_rev)
 {
-	int	ret;
 	int	i_a;
-	int i_b;
+	int	i_b;
+	ft_printf("comparing %s and %s\n", a.name, b.name);
 
-	i_a = -1;
-	i_b = -1;
-	while(a_arr.name[++i_a] && b_arr.name[++i_b])
+	i_a = 0;
+	i_b = 0;
+	while (a.name[i_a] && b.name[i_b])
 	{
-		if (!ft_isalpha(a_arr.name[i_a]))
+		if (!ft_isalpha(a.name[i_a]))
+		{
+			i_a++;
 			continue;
-		if (!ft_isalpha(b_arr.name[i_b]))
+		}
+		if (!ft_isalpha(b.name[i_b]))
+		{
+			i_b++;
 			continue;
-		if (ft_tolower(a_arr.name[i_a]) == ft_tolower(b_arr.name[i_b]))
-			continue;
-		ret = ft_tolower(a_arr.name[i_a]) - ft_tolower(b_arr.name[i_b]);
-		break;
+		}
+		if (ft_tolower(a.name[i_a]) != ft_tolower(b.name[i_b]))
+			return ft_tolower(a.name[i_a]) - ft_tolower(b.name[i_b]);
+		i_a++;
+		i_b++;
 	}
-	if (a_arr.name[++i_a] || b_arr.name[++i_b])
-		ret = ft_tolower(a_arr.name[i_a]) - ft_tolower(b_arr.name[i_b]);
-	if (is_rev)
-		return (-ret);
-	return (ret);
+	if (ft_tolower(a.name[i_a]) != ft_tolower(b.name[i_b]))
+		return ft_tolower(a.name[i_a]) - ft_tolower(b.name[i_b]);
+	return (0);
+	(void) is_rev;
 }
 
 static
 void	sort_symbols(t_symbol_array array, int is_rev)
 {
-	int swapped;
+	int n;
+	int	new_n;
 
-	//COMBAK:
+	n = array.size;
+	while (n >= 1)
+	{
+		new_n = 0;
+		for (int i = 1; i < n; i++)
+		{
+			if (compare(array.array[i - 1], array.array[i], is_rev) > 0)
+			{
+				swap(&(array.array[i - 1]), &(array.array[i]));
+				new_n = i;
+			}
+		}
+		n = new_n;
+	}
 }
 
 static
