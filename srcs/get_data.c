@@ -1,24 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   print_messages.h                                   :+:      :+:    :+:   */
+/*   get_data.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ***REMOVED*** <***REMOVED***@***REMOVED***>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/18 16:47:31 by ***REMOVED***            #+#    #+#             */
-/*   Updated: 2024/01/19 09:42:26 by ***REMOVED***           ###   ########.fr       */
+/*   Created: 2024/01/23 11:54:30 by ***REMOVED***            #+#    #+#             */
+/*   Updated: 2024/01/23 14:22:42 by ***REMOVED***           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PRINT_MESSAGES_H
-# define PRINT_MESSAGES_H
+#include <get_data.h>
 
-# include <status.h>
-# include <t_target.h>
-# include <libft.h>
-
-void	print_help_message(void);
-void	print_supported_target_message(void);
-void	print_version_message(void);
-
-#endif
+char	*get_data(char *data, int offset, int len, int size)
+{
+	if (offset + len >= size)
+		return (NULL);
+	return (data + offset);
+}

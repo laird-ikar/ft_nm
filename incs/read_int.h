@@ -1,24 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   print_messages.h                                   :+:      :+:    :+:   */
+/*   read_int.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ***REMOVED*** <***REMOVED***@***REMOVED***>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/18 16:47:31 by ***REMOVED***            #+#    #+#             */
-/*   Updated: 2024/01/19 09:42:26 by ***REMOVED***           ###   ########.fr       */
+/*   Created: 2024/01/23 11:43:30 by ***REMOVED***            #+#    #+#             */
+/*   Updated: 2024/01/23 15:32:28 by ***REMOVED***           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PRINT_MESSAGES_H
-# define PRINT_MESSAGES_H
+#ifndef READ_INT_H
+#define READ_INT_H
 
-# include <status.h>
-# include <t_target.h>
-# include <libft.h>
+#include <stdint.h>
+#include <parse_file.h>
 
-void	print_help_message(void);
-void	print_supported_target_message(void);
-void	print_version_message(void);
+uint16_t	read_uint16(char data[], char endian);
+uint32_t	read_uint32(char data[], char endian);
+uint64_t	read_uint64(char data[], char endian);
 
 #endif

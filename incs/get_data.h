@@ -1,24 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   print_messages.h                                   :+:      :+:    :+:   */
+/*   get_data.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ***REMOVED*** <***REMOVED***@***REMOVED***>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/18 16:47:31 by ***REMOVED***            #+#    #+#             */
-/*   Updated: 2024/01/19 09:42:26 by ***REMOVED***           ###   ########.fr       */
+/*   Created: 2024/01/23 11:59:04 by ***REMOVED***            #+#    #+#             */
+/*   Updated: 2024/01/23 12:06:28 by ***REMOVED***           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PRINT_MESSAGES_H
-# define PRINT_MESSAGES_H
+#ifndef GET_DATA_H
+#define GET_DATA_H
 
-# include <status.h>
-# include <t_target.h>
-# include <libft.h>
+#include <libft.h>
 
-void	print_help_message(void);
-void	print_supported_target_message(void);
-void	print_version_message(void);
+#include <stddef.h>
+
+char	*get_data(char *data, int offset, int len, int size);
 
 #endif
