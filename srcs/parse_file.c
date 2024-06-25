@@ -6,7 +6,7 @@
 /*   By: ***REMOVED*** <***REMOVED***@***REMOVED***>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 16:55:21 by ***REMOVED***            #+#    #+#             */
-/*   Updated: 2024/01/25 16:28:46 by ***REMOVED***           ###   ########.fr       */
+/*   Updated: 2024/01/30 11:55:01 by ***REMOVED***           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,16 +122,51 @@ char	*get_strtab_elem
 }
 
 static
-char	generate_symbol(uint8_t info, uint16_t shndx)
+char	select_uplow(char sym, uint8_t bind)
+{
+	if (bind == STB_GLOBAL)
+		return ((char) ft_toupper(sym));
+	if (bind == STB_LOCAL)
+		return ((char) ft_tolower(sym));
+	return '!';
+}
+
+static
+char	generate_symbol(uint8_t info, uint16_t shndx, uint8_t visibility)
 {
 	uint8_t	symbol_type;
 	uint8_t	symbol_bind;
 
 	symbol_type  = info & 0xf;
 	symbol_bind  = info >> 4;
-	if (symbol_type == STT_NOTYPE && shndx == SHN_UNDEF)
+
+	ft_printf("type:%x bind:%x ndx:%x :::::: ", symbol_type, symbol_bind, shndx);
+
+	if (shndx == SHN_ABS)
+		return select_uplow('A', symbol_bind);
+	if (symbol_type == STT_OBJECT && (shndx == SHN_UNDEF))
+		return select_uplow('B', symbol_bind);
+	if (symbol_type == STT_OBJECT && shndx == SHN_COMMON)
+		return select_uplow('C', symbol_bind);
+	if (symbol_type == STT_OBJECT && shndx != SHN_UNDEF &&
+			shndx != SHN_COMMON)
+		return select_uplow('D', symbol_bind);
+	if (symbol_type == STT_FUNC && shndx != SHN_UNDEF &&
+			shndx != SHN_COMMON)
+		return 'T';
+	if (symbol_bind == STB_WEAK && symbol_type == STT_OBJECT &&
+		(shndx == SHN_UNDEF || shndx == SHN_COMMON))
+		return 'V';
+	if (symbol_bind == STB_WEAK && symbol_type == STT_OBJECT)
+		return 'v';
+	if (symbol_bind == STB_WEAK && (shndx == SHN_UNDEF || shndx == SHN_COMMON))
+		return 'w';
+	if (symbol_bind == STB_WEAK)
+		return 'W';
+	if (shndx == SHN_UNDEF)
 		return 'U';
 	return '?';
+	(void) visibility;
 }
 
 int	parse_file(char *path, uint8_t flags, int has_to_print_name)
@@ -202,17 +237,18 @@ int	parse_file(char *path, uint8_t flags, int has_to_print_name)
 			nb_entry = symtab_size / symtab_entrysize;
 			while (--nb_entry)
 			{
+				ptr += symtab_entrysize;
 				uint64_t	value = read_uint64(ptr + 0x08, endian);
 				char		*name = get_strtab_elem(data, sh_infos, read_uint32(ptr, endian), data_size, bits, endian);
 				uint8_t		info = *(ptr + 0x04);
+				uint8_t		visibility = *(ptr + 0x5);
 				uint16_t	shndx = read_uint16(ptr + 0x06, endian);
-				char		symbol = generate_symbol(info, shndx);
+				char		symbol = generate_symbol(info, shndx, visibility);
 
 
 				// TODO: change direct print for a storage: need to sort and filter that shit
 				sh_infos.section_name_index = link;
-				ft_printf("%016lx %c %s\n", value, info, name);
-				ptr += symtab_entrysize;
+				ft_printf("%016lx %c %s\n", value, symbol, name);
 			}
 		}
 		sh_infos.current_offset += sh_infos.entry_size;

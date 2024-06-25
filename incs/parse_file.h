@@ -6,7 +6,7 @@
 /*   By: ***REMOVED*** <***REMOVED***@***REMOVED***>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 16:59:17 by ***REMOVED***            #+#    #+#             */
-/*   Updated: 2024/01/25 16:40:23 by ***REMOVED***           ###   ########.fr       */
+/*   Updated: 2024/01/25 22:52:12 by ***REMOVED***           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,14 +52,34 @@ enum	e_symbol_types
 	STT_LOOS = 10,
 	STT_HIOS = 12,
 	STT_LOPROC = 13,
-
+	STT_SPARC_REGISTER = 13,
+	STT_HIPROC = 15
 };
 
 enum	e_symbol_binds
-{};
+{
+	STB_LOCAL = 0,
+	STB_GLOBAL = 1,
+	STB_WEAK = 2,
+	STB_LOOS = 10,
+	STB_HIOS = 12,
+	STB_LOPROC = 13,
+	STB_HIPROC = 15
+};
 
 enum	e_shndx
-{};
+{
+	SHN_UNDEF = 0,
+	SHN_LORESERVE = 0xff00,
+	SHN_LOPROC = 0xff00,
+	SHN_HIPROC = 0xff1f,
+	SHN_LOOS = 0xff20,
+	SHN_HIOS = 0xff3f,
+	SHN_ABS = 	0xfff1,
+	SHN_COMMON = 0xfff2,
+	SHN_XINDEX = 0xffff,
+	SHN_HIRESERVE = 0xffff,
+};
 
 #define	SYMTAB_TAG	0x2
 
