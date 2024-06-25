@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: ***REMOVED*** <***REMOVED***@***REMOVED***>      +#+  +:+       +#+         #
+#    By: stage <***REMOVED***@***REMOVED***>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/24 15:05:38 by ***REMOVED***            #+#    #+#              #
-#    Updated: 2024/05/02 13:53:12 by ***REMOVED***           ###   ########.fr        #
+#    Updated: 2024/06/04 17:26:09 by stage            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -31,7 +31,7 @@ SILENCER		=	@
 
 CC				=	$(SILENCER)/bin/cc
 CFLAGS			=	-Wall -Werror -Wextra $(addprefix -I, $(INCS_DIR) $(addprefix $(LIBS_DIR), $(LIBS_INCS_DIR)))
-DEBUG_FLAGS		=	-g3
+DEBUG_FLAGS		=	-g3 -fsanitize=address -D FT_DEBUG_MODE
 
 RM				= $(SILENCER)/bin/rm -rf
 
@@ -52,8 +52,8 @@ $(NAME):		$(INCS) $(OBJS) $(LIBS)
 debug:			CFLAGS+=$(DEBUG_FLAGS)
 debug:			re
 
-libs/libft/libft.a:
-	$(MAKE) -C libs/libft
+libft/libft.a:
+	$(MAKE) -C libft
 
 %.o:			%.c
 	$(CC) $(CFLAGS) $^ -c -o $@

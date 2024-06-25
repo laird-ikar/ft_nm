@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   array_2d.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ***REMOVED*** <***REMOVED***@***REMOVED***>      +#+  +:+       +#+        */
+/*   By: stage <***REMOVED***@***REMOVED***>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/01 16:44:16 by ***REMOVED***            #+#    #+#             */
-/*   Updated: 2024/05/01 16:46:25 by ***REMOVED***           ###   ########.fr       */
+/*   Updated: 2024/06/04 17:06:47 by stage            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,6 @@ void	free_2d(t_array_2d arr)
 
 	i = 0;
 	while (i < arr.nb_elem)
-		free(arr.data[i]);
+		free(arr.data[i++]);
 	free(arr.data);
 }

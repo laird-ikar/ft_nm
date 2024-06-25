@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   print_help.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ***REMOVED*** <***REMOVED***@***REMOVED***>      +#+  +:+       +#+        */
+/*   By: stage <***REMOVED***@***REMOVED***>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 13:30:18 by ***REMOVED***            #+#    #+#             */
-/*   Updated: 2024/05/02 13:54:38 by ***REMOVED***           ###   ########.fr       */
+/*   Updated: 2024/06/04 17:07:05 by stage            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,5 +14,5 @@
 
 void	print_help(void)
 {
-	ft_printf("the help that helps");
+	ft_printf("the help that helps\n");
 }
