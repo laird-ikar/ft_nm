@@ -6,7 +6,7 @@
 /*   By: ***REMOVED*** <***REMOVED***@***REMOVED***>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 16:55:21 by ***REMOVED***            #+#    #+#             */
-/*   Updated: 2024/02/01 15:45:16 by ***REMOVED***           ###   ########.fr       */
+/*   Updated: 2024/02/01 15:57:35 by ***REMOVED***           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -189,7 +189,7 @@ t_symbol_array	init_symbol_array(void)
 }
 
 static
-void	add_symbol(char *name, char symbol, uint64_t value, t_symbol_array array)
+t_symbol_array	add_symbol(char *name, char symbol, uint64_t value, t_symbol_array array)
 {
 	t_symbol	*tmp;
 
@@ -204,6 +204,7 @@ void	add_symbol(char *name, char symbol, uint64_t value, t_symbol_array array)
 	array.array[array.size].name = name;
 	array.array[array.size].symbol = symbol;
 	array.array[array.size++].value = value;
+	return (array);
 }
 
 static
@@ -231,16 +232,16 @@ int	is_extern(t_symbol symbol)
 static
 int	is_normal(t_symbol symbol)
 {
-	return (!is_extern(symbol));
+	return (!is_extern(symbol) && symbol.symbol != 'a');
 }
 
 static
 void	print_symbol(t_symbol symbol)
 {
 	if (symbol.value == 0 && symbol.symbol != 'a')
-		ft_printf("%16s %c %s", "", symbol.symbol, symbol.name);
+		ft_printf("%16s %c %s\n", "", symbol.symbol, symbol.name);
 	else
-		ft_printf("%016lx %c %s", symbol.value, symbol.symbol, symbol.name);
+		ft_printf("%016lx %c %s\n", symbol.value, symbol.symbol, symbol.name);
 }
 
 static
@@ -255,7 +256,7 @@ void	print_symbols(t_symbol_array array, uint8_t flags, int has_to_print_name, c
 			; //TODO: reverse order
 	}
 	if (has_to_print_name)
-		ft_printf("\n %s:", path);
+		ft_printf("\n %s:\n", path);
 	i = 0;
 	while (i < array.size)
 	{
@@ -357,14 +358,7 @@ int	parse_file(char *path, uint8_t flags, int has_to_print_name)
 					section_type = read_uint32(offset_ptr + 0x04, endian);
 				}
 				char		symbol = generate_symbol(symbol_info, shndx, visibility, section_name, section_flag, section_type);
-
-
-				// TODO: change direct print for a storage: need to sort and filter that shit
-				if (symbol == 'U' || symbol == 'V' || symbol == 'u' || symbol == 'v' || symbol == 'w')
-					ft_printf("%16s %c %s\n", "", symbol, name);
-				else
-					ft_printf("%016lx %c %s\n", value, symbol, name);
-				add_symbol(name, symbol, value, symbol_array);
+				symbol_array = add_symbol(name, symbol, value, symbol_array);
 			}
 		}
 		section_table_info.current_offset += section_table_info.entry_size;
