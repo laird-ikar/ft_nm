@@ -6,7 +6,7 @@
 /*   By: ***REMOVED*** <***REMOVED***@***REMOVED***>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/01 15:57:40 by ***REMOVED***            #+#    #+#             */
-/*   Updated: 2024/06/13 16:45:55 by ***REMOVED***           ###   ########.fr       */
+/*   Updated: 2024/06/14 12:12:29 by ***REMOVED***           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,11 +116,39 @@ typedef struct s_32bits_section {
 	uint32_t	entsize;
 }	t_32bits_section;
 
+typedef struct s_symbol_64bits {
+	uint32_t	name;
+	uint8_t		info;
+	uint8_t		other;
+	uint16_t	shndx;
+	uint64_t	value;
+	uint64_t	size;
+} t_symbol_64bits;
+
+typedef struct s_symbol_32bits {
+	uint32_t	name;
+	uint8_t		info;
+	uint8_t		other;
+	uint16_t	shndx;
+	uint32_t	value;
+	uint32_t	size;
+} t_symbol_32bits;
+
+typedef struct s_symbol {
+	union {
+		t_symbol_32bits	_32bits;
+		t_symbol_64bits	_64bits;
+	};
+	char	*name;
+	int		should_skip;
+}	t_symbol;
+
 typedef struct s_section {
 	union {
 		t_32bits_section	_32bits;
 		t_64bits_section	_64bits;
 	};
+	t_symbol	*symbols;
 }	t_section;
 
 typedef struct s_elf {

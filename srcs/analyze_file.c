@@ -6,7 +6,7 @@
 /*   By: ***REMOVED*** <***REMOVED***@***REMOVED***>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/05 10:35:19 by stage             #+#    #+#             */
-/*   Updated: 2024/06/13 18:09:00 by ***REMOVED***           ###   ########.fr       */
+/*   Updated: 2024/06/14 16:52:20 by ***REMOVED***           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,10 +111,18 @@ void	load_sections(t_nm *nm)
 		nm->file.status = MALFORMED_FILE;
 }
 
+char	*load_name(t_nm *nm, uint32_t name_offset, uint32_t name_table_offset)
+{
+	// if (nm->file.size < name_table_offset + name_offset)
+	// 	return (NULL);
+	return ((char *) nm->file.raw_data + name_table_offset + name_offset);
+}
+
 void	load_symbols(t_nm *nm)
 {
-	int	i;
-	int	nb_sections;
+	unsigned int	i;
+	unsigned int	ii;
+	unsigned int	nb_sections;
 
 	if (nm->elf.header.indent.class == EI_CLASS_32BIT)
 		nb_sections = nm->elf.header._32bits.shnum;
@@ -125,37 +133,207 @@ void	load_symbols(t_nm *nm)
 	{
 		if (nm->elf.header.indent.class == EI_CLASS_32BIT)
 		{
-			if (nm->elf.sections[i]._32bits.type == 0x2)
-				ft_printf("SYMTAB\n");
-			else if (nm->elf.sections[i]._32bits.type == 0x0B)
-				ft_printf("DYNSYM\n");
-			else
-				ft_printf("OTHER\n");
+			if (nm->elf.sections[i]._32bits.type == SHT_SYMTAB)
+			{
+				if (nm->elf.sections[i]._32bits.offset + nm->elf.sections[i]._32bits.size > nm->file.size)
+				{
+					nm->file.status = MALFORMED_FILE;
+					return ;
+				}
+				nm->elf.sections[i].symbols = ft_calloc(nm->elf.sections[i]._32bits.size / nm->elf.sections[i]._32bits.entsize, sizeof (t_symbol));
+				ii = 0;
+				while (ii < nm->elf.sections[i]._32bits.size / nm->elf.sections[i]._32bits.entsize)
+				{
+					ft_memcpy(
+						&(nm->elf.sections[i].symbols[ii]._32bits),
+						nm->file.raw_data + nm->elf.sections[i]._32bits.offset
+							+ ii * nm->elf.sections[i]._32bits.entsize,
+						nm->elf.sections[i]._32bits.entsize
+					);
+					nm->elf.sections[i].symbols[ii].name
+						= load_name(
+							nm, nm->elf.sections[i].symbols[ii]._32bits.name,
+							nm->elf.sections[nm->elf.sections[i]._32bits.link]
+								._32bits.offset
+						);
+					if (nm->elf.sections[i].symbols[ii].name == NULL)
+					{
+						ft_printf("name is null\n");
+					}
+					ii++;
+				}
+			}
 		}
 		else
 		{
-			if (nm->elf.sections[i]._64bits.type == 0x2)
-				ft_printf("SYMTAB\n");
-			else if (nm->elf.sections[i]._64bits.type == 0x0B)
-				ft_printf("DYNSYM\n");
-			else
-				ft_printf("OTHER\n");
+			if (nm->elf.sections[i]._64bits.type == SHT_SYMTAB)
+			{
+				if (nm->elf.sections[i]._64bits.offset + nm->elf.sections[i]._64bits.size > nm->file.size)
+				{
+					nm->file.status = MALFORMED_FILE;
+					return ;
+				}
+				nm->elf.sections[i].symbols = ft_calloc(nm->elf.sections[i]._64bits.size / nm->elf.sections[i]._64bits.entsize, sizeof (t_symbol));
+				ii = 0;
+				while (ii < nm->elf.sections[i]._64bits.size / nm->elf.sections[i]._64bits.entsize)
+				{
+					ft_memcpy(
+						&(nm->elf.sections[i].symbols[ii]._64bits),
+						nm->file.raw_data + nm->elf.sections[i]._64bits.offset
+							+ ii * nm->elf.sections[i]._64bits.entsize,
+						nm->elf.sections[i]._64bits.entsize
+					);
+					// ft_printf("text %d\n", nm->elf.sections[i]._64bits.link);
+					// ft_printf("idx %x\n", nm->elf.sections[i].symbols[ii]._64bits.name);
+					nm->elf.sections[i].symbols[ii].name
+						= load_name(
+							nm, nm->elf.sections[i].symbols[ii]._64bits.name,
+							nm->elf.sections[nm->elf.sections[i]._64bits.link]
+								._64bits.offset
+						);
+
+					ii++;
+				}
+			}
 		}
 		i++;
 	}
 }
 
-void	print_symbols(t_nm *nm)
+void	print_symbols_32bits(t_nm *nm)
 {
 	(void) nm;
 }
 
-char	*load_name(t_nm *nm, uint32_t name_offset, uint32_t name_table_offset)
+int compare(t_symbol a, t_symbol b)
 {
-	if (nm->file.size < name_table_offset + name_offset)
-		return (NULL);
-	return ((char *) nm->file.raw_data + name_table_offset + name_offset);
+	int a_i;
+	int b_i;
+
+	if (a.name == NULL || b.name == NULL)
+		return (0);
+	a_i = 0;
+	b_i = 0;
+	while (a.name[a_i] && b.name[b_i])
+	{
+		while (a.name[a_i] && !ft_isalnum(a.name[a_i]))
+			a_i++;
+		while (b.name[b_i] && !ft_isalnum(b.name[b_i]))
+			b_i++;
+		if (
+			(ft_toupper(a.name[a_i]) >= 'A' && ft_toupper(a.name[a_i]) <= 'Z')
+			&& (ft_toupper(b.name[b_i]) >= 'A' && ft_toupper(b.name[b_i]) <= 'Z')
+			&& ft_toupper(a.name[a_i]) != ft_toupper(b.name[b_i])
+		)
+			return (ft_toupper(a.name[a_i]) - ft_toupper(b.name[b_i]));
+		a_i++;
+		b_i++;
+	}
+	return (ft_strcmp(a.name, b.name));
 }
+
+int rev_compare(t_symbol a, t_symbol b)
+{
+	return (-compare(a, b));
+}
+
+void swap(t_symbol* a, t_symbol* b)
+{
+	t_symbol temp = *a;
+	*a = *b;
+	*b = temp;
+}
+
+// Partition function
+int partition(t_symbol *symbols, int low, int high, int (*f_comp)(t_symbol, t_symbol))
+{
+	t_symbol	pivot = symbols[low];
+	int			i = low;
+	int			j = high;
+
+	while (i < j) {
+		while (f_comp(symbols[i], pivot) <= 0 && i <= high - 1) {
+			i++;
+		}
+		while (f_comp(symbols[j], pivot) > 0 && j >= low + 1) {
+			j--;
+		}
+		if (i < j) {
+			swap(&symbols[i], &symbols[j]);
+		}
+	}
+	swap(&symbols[low], &symbols[j]);
+	return j;
+}
+
+void quick_sort(t_symbol *symbols, int low, int high, int (*f_comp)(t_symbol, t_symbol))
+{
+	if (low < high) {
+		int partitionIndex = partition(symbols, low, high, f_comp);
+		quick_sort(symbols, low, partitionIndex - 1, f_comp);
+		quick_sort(symbols, partitionIndex + 1, high, f_comp);
+	}
+}
+
+void	print_symbols_64bits(t_nm *nm)
+{
+	t_symbol		*symbols;
+	unsigned int	total_symbols;
+	unsigned int	i;
+
+	total_symbols = 0;
+	i = 0;
+	while (i < nm->elf.header._64bits.shnum)
+	{
+		if (nm->elf.sections[i].symbols)
+		{
+			total_symbols += nm->elf.sections[i]._64bits.size / nm->elf.sections[i]._64bits.entsize;
+		}
+		i++;
+	}
+	symbols = ft_calloc(total_symbols, sizeof (t_symbol));
+	i = 0;
+	total_symbols = 0;
+	while (i < nm->elf.header._64bits.shnum)
+	{
+		if (nm->elf.sections[i].symbols)
+		{
+			ft_memcpy(
+				symbols + total_symbols,
+				nm->elf.sections[i].symbols,
+				sizeof (t_symbol) * (nm->elf.sections[i]._64bits.size / nm->elf.sections[i]._64bits.entsize)
+			);
+			total_symbols += nm->elf.sections[i]._64bits.size / nm->elf.sections[i]._64bits.entsize;
+		}
+		i++;
+	}
+	if (nm->input.no_sort)
+		;
+	else if (nm->input.reverse_sort)
+		quick_sort(symbols, 0, total_symbols - 1, rev_compare);
+	else
+		quick_sort(symbols, 0, total_symbols - 1, compare);
+	// TODO: filter symbols
+	i = 1;
+	while (i < total_symbols)
+	{
+		if (!symbols[i].should_skip)
+		{
+			ft_printf("%016lx %c %s\n", symbols[i]._64bits.value, '?', symbols[i].name);
+		}
+		i++;
+	}
+	free(symbols);
+}
+
+void	print_symbols(t_nm *nm)
+{
+	if (nm->elf.header.indent.class == EI_CLASS_32BIT)
+		print_symbols_32bits(nm);
+	else
+		print_symbols_64bits(nm);
+}
+
 #ifdef FT_DEBUG_MODE
 void	print_sections(t_nm *nm)
 {
@@ -179,6 +357,29 @@ void	print_sections(t_nm *nm)
 	ft_printf("\033[0m");
 }
 #endif
+
+void cleanup(t_nm *nm)
+{
+	unsigned int	i;
+	unsigned int	nb_sections;
+
+	if (nm->elf.header.indent.class == EI_CLASS_32BIT)
+		nb_sections = nm->elf.header._32bits.shnum;
+	else
+		nb_sections = nm->elf.header._64bits.shnum;
+	i = 0;
+	while (i < nb_sections)
+	{
+		if (nm->elf.sections[i].symbols)
+		{
+			free(nm->elf.sections[i].symbols);
+			nm->elf.sections[i].symbols = NULL;
+		}
+		i++;
+	}
+	free(nm->elf.sections);
+	munmap(nm->file.raw_data, nm->file.size);
+}
 
 void	analyze_file(char *file_path, t_nm nm)
 {
@@ -204,6 +405,5 @@ void	analyze_file(char *file_path, t_nm nm)
 	#endif
 	load_symbols(&nm);
 	print_symbols(&nm);
-	free(nm.elf.sections);
-	munmap(nm.file.raw_data, nm.file.size);
+	cleanup(&nm);
 }
