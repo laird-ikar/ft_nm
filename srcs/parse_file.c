@@ -6,7 +6,7 @@
 /*   By: ***REMOVED*** <***REMOVED***@***REMOVED***>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 16:55:21 by ***REMOVED***            #+#    #+#             */
-/*   Updated: 2024/02/01 15:57:35 by ***REMOVED***           ###   ########.fr       */
+/*   Updated: 2024/02/01 15:59:16 by ***REMOVED***           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -214,7 +214,6 @@ int	is_undefined(t_symbol symbol)
 		symbol.symbol == 'u' ||
 		symbol.symbol == 'V' ||
 		symbol.symbol == 'v' ||
-		symbol.symbol == 'W' ||
 		symbol.symbol == 'w'
 	);
 }
@@ -238,7 +237,7 @@ int	is_normal(t_symbol symbol)
 static
 void	print_symbol(t_symbol symbol)
 {
-	if (symbol.value == 0 && symbol.symbol != 'a')
+	if (is_undefined(symbol))
 		ft_printf("%16s %c %s\n", "", symbol.symbol, symbol.name);
 	else
 		ft_printf("%016lx %c %s\n", symbol.value, symbol.symbol, symbol.name);
