@@ -1,5 +1,4 @@
 *.o
 ft_nm
 .vscode
-ft
-og
+exemple_files/
