@@ -6,7 +6,7 @@
 #    By: ***REMOVED*** <***REMOVED***@***REMOVED***>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/24 15:05:38 by ***REMOVED***            #+#    #+#              #
-#    Updated: 2024/01/31 17:13:39 by ***REMOVED***           ###   ########.fr        #
+#    Updated: 2024/05/02 13:53:12 by ***REMOVED***           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,8 +17,9 @@ INCS_DIR		=	incs/
 LIBS_DIR		=
 LIBS_INCS_DIR	=	libft/
 
-SOURCES			=	ft_nm init print_messages parse_file read_int get_data
-INCLUDES		=	status t_nm t_target
+SOURCES			=	array_2d	ft_error	ft_nm	init	parse_input			\
+					print_help
+INCLUDES		=	struct	enum
 LIBRARIES		=	libft
 
 LIBS			=	$(foreach lib, $(LIBRARIES), $(LIBS_DIR)$(lib)/$(lib).a)
@@ -26,13 +27,13 @@ SRCS			=	$(addprefix $(SRCS_DIR), $(addsuffix .c, $(SOURCES)))
 INCS			=	$(addprefix $(INCS_DIR), $(addsuffix .h, $(SOURCES) $(INCLUDES)))
 OBJS			=	$(SRCS:.c=.o)
 
-SILENCER		=
+SILENCER		=	@
 
-CC				=	$(SILENCER)cc
+CC				=	$(SILENCER)/bin/cc
 CFLAGS			=	-Wall -Werror -Wextra $(addprefix -I, $(INCS_DIR) $(addprefix $(LIBS_DIR), $(LIBS_INCS_DIR)))
 DEBUG_FLAGS		=	-g3
 
-RM				= $(SILENCER)rm -rf
+RM				= $(SILENCER)/bin/rm -rf
 
 all:			$(NAME)
 
