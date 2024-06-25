@@ -6,7 +6,7 @@
 /*   By: stage <***REMOVED***@***REMOVED***>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/01 16:19:22 by ***REMOVED***            #+#    #+#             */
-/*   Updated: 2024/06/04 17:58:42 by stage            ###   ########.fr       */
+/*   Updated: 2024/06/05 09:47:09 by stage            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,21 +41,33 @@ t_input	parse_input(int argc, char *argv[], t_nm nm)
 	return (input);
 }
 
-// TODO: not only check for exact
-// match but also start (i.e. --de == --d == --debyg-syms)
+static int	is_start(char *needle, char *hay)
+{
+	int	i;
+
+	i = 0;
+	while (needle[i])
+	{
+		if (needle[i] != hay[i])
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
 static void	parse_long_option(char *option, t_input *input, t_nm nm)
 {
-	if (!ft_strcmp(option, "--debug-syms"))
+	if (is_start(option + 2, "debug-syms"))
 		input->debug_symbols = ACTIVE;
-	else if (!ft_strcmp(option, "--extern-only"))
+	else if (is_start(option + 2, "extern-only"))
 		input->extern_only = ACTIVE;
-	else if (!ft_strcmp(option, "--undefined-only"))
+	else if (is_start(option + 2, "undefined-only"))
 		input->undefined_only = ACTIVE;
-	else if (!ft_strcmp(option, "--reverse-sort"))
+	else if (is_start(option + 2, "reverse-sort"))
 		input->reverse_sort = ACTIVE;
-	else if (!ft_strcmp(option, "--no-sort"))
+	else if (is_start(option + 2, "no-sort"))
 		input->no_sort = ACTIVE;
-	else if (!ft_strcmp(option, "--help"))
+	else if (is_start(option + 2, "help"))
 		input->help = ACTIVE;
 	else
 	{
