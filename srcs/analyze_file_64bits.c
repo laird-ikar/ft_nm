@@ -6,7 +6,7 @@
 /*   By: yyyyyyyy <yyyyyyyy@42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/21 11:39:09 by yyyyyyyy          #+#    #+#             */
-/*   Updated: 2024/06/25 10:38:06 by yyyyyyyy         ###   ########.fr       */
+/*   Updated: 2024/06/25 11:51:56 by yyyyyyyy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,32 @@ void	load_sections(t_nm *nm)
 		i++;
 	}
 }
+
+static
+char load_type(t_nm *nm, t_symbol sym)
+{
+	char		type;
+	char		bind;
+	char		visibility;
+	uint16_t	shndx;
+	char		c;
+	char		*section_name;
+
+	type = sym._64bits.info & 0xf;
+	bind = sym._64bits.info >> 4;
+	visibility = sym._64bits.other & 0x3;
+	shndx = sym._64bits.shndx;
+	section_name = load_name(
+		nm,
+		nm->elf.sections[sym._64bits.shndx]._64bits.name,
+		nm->elf.sections[nm->elf.header._64bits.shstrndx]._64bits.offset
+	);
+
+	// COMBAK: you need to analyse a shit tone of binaries to get the symbols cleanly
+
+	return c;
+}
+
 static
 void	load_symbols(t_nm *nm)
 {
@@ -92,7 +118,10 @@ void	load_symbols(t_nm *nm)
 	i = 0;
 	while (i < nb_sections)
 	{
-		if (nm->elf.sections[i]._64bits.type == SHT_SYMTAB)
+		if (
+			nm->elf.sections[i]._64bits.type == SHT_SYMTAB
+			// || nm->elf.sections[i]._64bits.type == SHT_DYNSYM
+		)
 		{
 			if (nm->elf.sections[i]._64bits.offset + nm->elf.sections[i]._64bits.size > nm->file.size)
 			{
@@ -109,13 +138,21 @@ void	load_symbols(t_nm *nm)
 						+ ii * nm->elf.sections[i]._64bits.entsize,
 					nm->elf.sections[i]._64bits.entsize
 				);
-				nm->elf.sections[i].symbols[ii].name
-					= load_name(
-						nm, nm->elf.sections[i].symbols[ii]._64bits.name,
-						nm->elf.sections[nm->elf.sections[i]._64bits.link]
-							._64bits.offset
-					);
-
+				if ((nm->elf.sections[i].symbols[ii]._64bits.info & 0xf) == STT_SECTION)
+					nm->elf.sections[i].symbols[ii].name
+						= load_name(
+							nm,
+							nm->elf.sections[nm->elf.sections[i].symbols[ii]._64bits.shndx]._64bits.name,
+							nm->elf.sections[nm->elf.header._64bits.shstrndx]._64bits.offset
+						);
+				else
+					nm->elf.sections[i].symbols[ii].name
+						= load_name(
+							nm, nm->elf.sections[i].symbols[ii]._64bits.name,
+							nm->elf.sections[nm->elf.sections[i]._64bits.link]
+								._64bits.offset
+						);
+				nm->elf.sections[i].symbols[ii].type = load_type(nm, nm->elf.sections[i].symbols[ii]);
 				ii++;
 			}
 		}
@@ -168,78 +205,7 @@ void	print_symbols(t_nm *nm)
 	{
 		if (!symbols[i].should_skip)
 		{
-			char		symbol_type;
-			char		symbol_bind;
-			char		symbol_visibility;
-			uint16_t	shndx;
-			char		c;
-			// char		*section_name;
-
-			symbol_type = symbols[i]._64bits.info & 0xf;
-			symbol_bind = symbols[i]._64bits.info >> 4;
-			symbol_visibility = symbols[i]._64bits.other & 0x3;
-			shndx = symbols[i]._64bits.shndx;
-			if (symbol_type == STT_NOTYPE)
-				c = '?';
-			else if (symbol_type == STT_OBJECT)
-				c = 'D';
-			else if (symbol_type == STT_FUNC)
-				c = 'T';
-			else if (symbol_type == STT_SECTION)
-				c = 'N';
-			else if (symbol_type == STT_FILE)
-				c = 'N';
-			else if (symbol_type == STT_COMMON)
-				c = 'C';
-			else if (symbol_type == STT_TLS)
-				c = 'D';
-			else
-				c = '?';
-			if (shndx == SHN_ABS)
-				c = 'A';
-			else if (shndx == SHN_COMMON)
-				c = 'C';
-			else if (symbol_bind == STB_WEAK)
-			{
-				if (symbol_type == STT_OBJECT)
-				{
-					if (shndx != SHN_UNDEF)
-						c = 'V';
-					else
-						c = 'v';
-				}
-				else
-				{
-					if (shndx != SHN_UNDEF)
-						c = 'W';
-					else
-						c = 'w';
-				}
-			}
-			else if (shndx == SHN_UNDEF)
-				c = 'U';
-			else {
-				uint32_t section_type = nm->elf.sections[shndx]._64bits.type;
-				if (section_type == SHT_NOBITS)
-					c = 'B';
-				else if (section_type == SHT_PROGBITS || section_type == SHT_NOTE)
-				{
-					uint64_t section_flags = nm->elf.sections[shndx]._64bits.flags;
-					if (section_flags & SHF_EXECINSTR) {
-						c = 'T';  // Text (code) section
-					} else if (section_flags & SHF_ALLOC) {
-						if (section_flags & SHF_WRITE) {
-							c = 'D';
-						} else {
-							c = 'R';
-						}
-					}
-				}
-			}
-			if (symbol_bind == STB_LOCAL && c != 'W' && c != 'V')
-				c = ft_tolower(c);
-			if (i == 1)
-				c = 'a';
+			char c = symbols[i].type;
 			if ((symbols[i]._64bits.value != 0 || c == 'u' || c == 'a' || c == 'b') && c != 'U')
 				ft_printf("%016lx %c %s\n", symbols[i]._64bits.value, c, symbols[i].name);
 			else

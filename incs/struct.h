@@ -6,7 +6,7 @@
 /*   By: yyyyyyyy <yyyyyyyy@42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/01 15:57:40 by yyyyyyyy          #+#    #+#             */
-/*   Updated: 2024/06/25 10:38:05 by yyyyyyyy         ###   ########.fr       */
+/*   Updated: 2024/06/25 11:37:47 by yyyyyyyy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,6 +140,7 @@ typedef struct s_symbol {
 		t_symbol_64bits	_64bits;
 	};
 	char	*name;
+	char	type;
 	int		should_skip;
 }	t_symbol;
 
