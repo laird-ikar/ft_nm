@@ -6,7 +6,7 @@
 /*   By: ***REMOVED*** <***REMOVED***@***REMOVED***>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/05 10:35:19 by stage             #+#    #+#             */
-/*   Updated: 2024/06/13 18:00:32 by ***REMOVED***           ###   ########.fr       */
+/*   Updated: 2024/06/13 18:09:00 by ***REMOVED***           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,7 +113,36 @@ void	load_sections(t_nm *nm)
 
 void	load_symbols(t_nm *nm)
 {
-	(void) nm;
+	int	i;
+	int	nb_sections;
+
+	if (nm->elf.header.indent.class == EI_CLASS_32BIT)
+		nb_sections = nm->elf.header._32bits.shnum;
+	else
+		nb_sections = nm->elf.header._64bits.shnum;
+	i = 0;
+	while (i < nb_sections)
+	{
+		if (nm->elf.header.indent.class == EI_CLASS_32BIT)
+		{
+			if (nm->elf.sections[i]._32bits.type == 0x2)
+				ft_printf("SYMTAB\n");
+			else if (nm->elf.sections[i]._32bits.type == 0x0B)
+				ft_printf("DYNSYM\n");
+			else
+				ft_printf("OTHER\n");
+		}
+		else
+		{
+			if (nm->elf.sections[i]._64bits.type == 0x2)
+				ft_printf("SYMTAB\n");
+			else if (nm->elf.sections[i]._64bits.type == 0x0B)
+				ft_printf("DYNSYM\n");
+			else
+				ft_printf("OTHER\n");
+		}
+		i++;
+	}
 }
 
 void	print_symbols(t_nm *nm)
