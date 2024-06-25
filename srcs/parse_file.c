@@ -6,7 +6,7 @@
 /*   By: ***REMOVED*** <***REMOVED***@***REMOVED***>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 16:55:21 by ***REMOVED***            #+#    #+#             */
-/*   Updated: 2024/02/01 16:02:50 by ***REMOVED***           ###   ########.fr       */
+/*   Updated: 2024/02/01 18:26:32 by ***REMOVED***           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -244,6 +244,50 @@ void	print_symbol(t_symbol symbol)
 	else
 		ft_printf("%016lx %c %s\n", symbol.value, symbol.symbol, symbol.name);
 }
+static
+void	swap(t_symbol *a, t_symbol* b)
+{
+	t_symbol	temp;
+
+	temp = *a;
+	*a = *b;
+	*b = temp;
+}
+
+static
+int	compare(t_symbol a_arr, t_symbol b_arr, int is_rev)
+{
+	int	ret;
+	int	i_a;
+	int i_b;
+
+	i_a = -1;
+	i_b = -1;
+	while(a_arr.name[++i_a] && b_arr.name[++i_b])
+	{
+		if (!ft_isalpha(a_arr.name[i_a]))
+			continue;
+		if (!ft_isalpha(b_arr.name[i_b]))
+			continue;
+		if (ft_tolower(a_arr.name[i_a]) == ft_tolower(b_arr.name[i_b]))
+			continue;
+		ret = ft_tolower(a_arr.name[i_a]) - ft_tolower(b_arr.name[i_b]);
+		break;
+	}
+	if (a_arr.name[++i_a] || b_arr.name[++i_b])
+		ret = ft_tolower(a_arr.name[i_a]) - ft_tolower(b_arr.name[i_b]);
+	if (is_rev)
+		return (-ret);
+	return (ret);
+}
+
+static
+void	sort_symbols(t_symbol_array array, int is_rev)
+{
+	int swapped;
+
+	//COMBAK:
+}
 
 static
 void	print_symbols(t_symbol_array array, uint8_t flags, int has_to_print_name, char *path)
@@ -252,9 +296,7 @@ void	print_symbols(t_symbol_array array, uint8_t flags, int has_to_print_name, c
 
 	if (!(flags & P_FLAG))
 	{
-		// TODO: sort symbols
-		if (flags & R_FLAG)
-			; //TODO: reverse order
+		sort_symbols(array, flags & R_FLAG);
 	}
 	if (has_to_print_name)
 		ft_printf("\n %s:\n", path);
