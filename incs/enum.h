@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   enum.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stage <***REMOVED***@***REMOVED***>       +#+  +:+       +#+        */
+/*   By: ***REMOVED*** <***REMOVED***@***REMOVED***>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 13:46:25 by ***REMOVED***            #+#    #+#             */
-/*   Updated: 2024/06/05 11:25:31 by stage            ###   ########.fr       */
+/*   Updated: 2024/06/12 16:28:11 by ***REMOVED***           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,12 @@ typedef enum e_error_codes {
 	FSTAT_ERROR,
 	OPEN_ERROR,
 	MMAP_ERROR,
+	MALFORMED_FILE,
 }	t_error_code;
+
+enum e_ei_class {
+	EI_CLASS_32BIT = 1,
+	EI_CLASS_64BIT = 2,
+};
 
 #endif

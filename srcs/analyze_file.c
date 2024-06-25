@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   analyze_file.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stage <***REMOVED***@***REMOVED***>       +#+  +:+       +#+        */
+/*   By: ***REMOVED*** <***REMOVED***@***REMOVED***>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/05 10:35:19 by stage             #+#    #+#             */
-/*   Updated: 2024/06/05 11:41:36 by stage            ###   ########.fr       */
+/*   Updated: 2024/06/12 17:01:39 by ***REMOVED***           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,23 @@ t_file	load_file(char *path)
 
 void	load_elf_header(t_nm *nm)
 {
-	(void) nm;
+	if (nm->file.size < sizeof (t_indent))
+	{
+		nm->file.status = MALFORMED_FILE;
+		return ;
+	}
+	ft_memcpy(&nm->elf.header.indent, nm->file.raw_data, sizeof (t_indent));
+	if (nm->elf.header.indent.magic != 0x464c457f)
+	{
+		nm->file.status = MALFORMED_FILE;
+		return ;
+	}
+	if (nm->elf.header.indent.class == EI_CLASS_32BIT && nm->file.size >= sizeof (t_indent) + sizeof (t_32bits_header))
+		ft_memmove(&nm->elf.header._32bits, nm->file.raw_data + sizeof (t_indent), sizeof (t_32bits_header));
+	else if (nm->elf.header.indent.class == EI_CLASS_64BIT && nm->file.size >= sizeof (t_indent) + sizeof (t_64bits_header))
+		ft_memmove(&nm->elf.header._64bits, nm->file.raw_data + sizeof (t_indent), sizeof (t_64bits_header));
+	else
+		nm->file.status = MALFORMED_FILE;
 }
 
 void	load_sections(t_nm *nm)
@@ -80,6 +96,14 @@ void	analyze_file(char *file_path, t_nm nm)
 	if (nm.input.files.nb_elem > 1)
 		ft_printf("\n%s:\n", file_path);
 	load_elf_header(&nm);
+	if (nm.file.status != SUCCESS)
+	{
+		ft_putstr_fd("ft_nm: ", STDIN_FILENO);
+		ft_putstr_fd(file_path, STDIN_FILENO);
+		ft_putstr_fd(": File format not recognized\n", STDIN_FILENO);
+		munmap(nm.file.raw_data, nm.file.size);
+		return ;
+	}
 	load_sections(&nm);
 	load_symbols(&nm);
 	print_symbols(&nm);
