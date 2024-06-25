@@ -1,21 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_nm.h                                            :+:      :+:    :+:   */
+/*   analyze_file.h                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: stage <***REMOVED***@***REMOVED***>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/01 15:42:07 by ***REMOVED***            #+#    #+#             */
-/*   Updated: 2024/06/05 10:41:02 by stage            ###   ########.fr       */
+/*   Created: 2024/06/05 10:36:13 by stage             #+#    #+#             */
+/*   Updated: 2024/06/05 10:40:42 by stage            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FT_NM_H
-# define FT_NM_H
+#ifndef ANALYZE_FILE_H
+# define ANALYSE_FILE_H
 
 # include <struct.h>
-# include <init.h>
-# include <parse_input.h>
-# include <analyze_file.h>
+# include <libft.h>
+
+void	analyze_file(char *file_path, t_nm nm);
 
 #endif

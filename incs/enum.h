@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   enum.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ***REMOVED*** <***REMOVED***@***REMOVED***>      +#+  +:+       +#+        */
+/*   By: stage <***REMOVED***@***REMOVED***>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 13:46:25 by ***REMOVED***            #+#    #+#             */
-/*   Updated: 2024/05/02 13:55:57 by ***REMOVED***           ###   ########.fr       */
+/*   Updated: 2024/06/05 10:46:41 by stage            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,9 @@ enum	e_flag_mode {
 };
 
 typedef enum e_error_codes {
-	INVALID_FLAG = 1
+	SUCCESS,
+	INVALID_FLAG,
+	FAILED_ALLOCATION,
 }	t_error_code;
 
 #endif

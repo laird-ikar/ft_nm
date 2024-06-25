@@ -6,7 +6,7 @@
 #    By: stage <***REMOVED***@***REMOVED***>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/24 15:05:38 by ***REMOVED***            #+#    #+#              #
-#    Updated: 2024/06/04 17:26:09 by stage            ###   ########.fr        #
+#    Updated: 2024/06/05 10:58:36 by stage            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,8 +17,8 @@ INCS_DIR		=	incs/
 LIBS_DIR		=
 LIBS_INCS_DIR	=	libft/
 
-SOURCES			=	array_2d	ft_error	ft_nm	init	parse_input			\
-					print_help
+SOURCES			=	analyze_file	ft_error	init		print_help			\
+					array_2d		ft_nm		parse_input
 INCLUDES		=	struct	enum
 LIBRARIES		=	libft
 
@@ -31,7 +31,7 @@ SILENCER		=	@
 
 CC				=	$(SILENCER)/bin/cc
 CFLAGS			=	-Wall -Werror -Wextra $(addprefix -I, $(INCS_DIR) $(addprefix $(LIBS_DIR), $(LIBS_INCS_DIR)))
-DEBUG_FLAGS		=	-g3 -fsanitize=address -D FT_DEBUG_MODE
+DEBUG_FLAGS		=	-g -D FT_DEBUG_MODE -fsanitize=address
 
 RM				= $(SILENCER)/bin/rm -rf
 

@@ -6,7 +6,7 @@
 /*   By: stage <***REMOVED***@***REMOVED***>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/01 16:19:22 by ***REMOVED***            #+#    #+#             */
-/*   Updated: 2024/06/05 09:47:09 by stage            ###   ########.fr       */
+/*   Updated: 2024/06/05 11:09:38 by stage            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 static void	parse_long_option(char *option, t_input *input, t_nm nm);
 static void	parse_short_options(char *options, t_input *input, t_nm nm);
-void		parse_file(char *file, t_input *input);
+static void	parse_file(char *file, t_input *input, t_nm nm);
 
 t_input	parse_input(int argc, char *argv[], t_nm nm)
 {
@@ -32,12 +32,12 @@ t_input	parse_input(int argc, char *argv[], t_nm nm)
 		else if (argv[i][0] == '-' && ft_strlen(argv[i]) > 1)
 			parse_short_options(argv[i], &input, nm);
 		else
-			parse_file(argv[i], &input);
+			parse_file(argv[i], &input, nm);
 	}
 	while (++i < argc)
-			parse_file(argv[i], &input);
-	if (input.files.nb_elem == 0)
-		parse_file("a.out", &input);
+			parse_file(argv[i], &input, nm);
+	if (!input.files.nb_elem)
+		parse_file("a.out", &input, nm);
 	return (input);
 }
 
@@ -105,23 +105,24 @@ static void	parse_short_options(char *options, t_input *input, t_nm nm)
 	}
 }
 
-void	parse_file(char *file, t_input *input)
+static void	parse_file(char *file, t_input *input, t_nm nm)
 {
-	void	*temporary_ptr;
+	void	*tmp;
 
 	if (!input->files.nb_allocated)
 	{
 		input->files.data = ft_calloc(1, sizeof (char *));
 		input->files.nb_allocated = 1;
 	}
-	else if (input->files.nb_allocated == input->files.nb_elem)
+	else if (input->files.nb_elem == input->files.nb_allocated)
 	{
-		temporary_ptr = input->files.data;
+		tmp = malloc(input->files.nb_allocated * 2 * sizeof (char *));
+		if (!tmp)
+			ft_error(nm, FAILED_ALLOCATION);
+		ft_memcpy(tmp, input->files.data, input->files.nb_elem * sizeof (char *));
+		free(input->files.data);
+		input->files.data = tmp;
 		input->files.nb_allocated *= 2;
-		input->files.data
-			= ft_calloc(input->files.nb_allocated, sizeof (char *));
-		ft_memcpy(input->files.data, temporary_ptr, input->files.nb_elem);
-		free(temporary_ptr);
 	}
-	input->files.data[input->files.nb_elem++] = ft_strdup(file);
+	input->files.data[(input->files.nb_elem)++] = ft_strdup(file);
 }

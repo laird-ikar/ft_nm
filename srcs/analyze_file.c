@@ -1,21 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_nm.h                                            :+:      :+:    :+:   */
+/*   analyze_file.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: stage <***REMOVED***@***REMOVED***>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/01 15:42:07 by ***REMOVED***            #+#    #+#             */
-/*   Updated: 2024/06/05 10:41:02 by stage            ###   ########.fr       */
+/*   Created: 2024/06/05 10:35:19 by stage             #+#    #+#             */
+/*   Updated: 2024/06/05 11:11:38 by stage            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FT_NM_H
-# define FT_NM_H
+#include <analyze_file.h>
 
-# include <struct.h>
-# include <init.h>
-# include <parse_input.h>
-# include <analyze_file.h>
+void	analyze_file(char *file_path, t_nm nm)
+{
 
-#endif
+	if (nm.input.files.nb_elem > 1)
+		ft_printf("\n%s:\n", file_path);
+}
