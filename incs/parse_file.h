@@ -6,7 +6,7 @@
 /*   By: ***REMOVED*** <***REMOVED***@***REMOVED***>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 16:59:17 by ***REMOVED***            #+#    #+#             */
-/*   Updated: 2024/01/25 22:52:12 by ***REMOVED***           ###   ########.fr       */
+/*   Updated: 2024/01/31 17:53:23 by ***REMOVED***           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,12 +28,32 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+typedef enum	e_is_symbol
+{
+	IS_SECTION,
+	IS_SYMBOL
+}	t_is_symbol;
+
 // INFO: https://docs.oracle.com/cd/E19683-01/816-1386/chapter6-79797/index.html
 enum	e_endians
 {
 	FT_SMALL_ENDIAN = 1,
 	FT_BIG_ENDIAN = 2,
 };
+
+typedef struct	s_symbol
+{
+	char		*name;
+	uint64_t	value;
+	char		symbol;
+}	t_symbol;
+
+typedef struct	s_symbol_array
+{
+	t_symbol	*array;
+	int			size;
+	int			allocated;
+}	t_symbol_array;
 
 enum	e_bits
 {
@@ -81,7 +101,12 @@ enum	e_shndx
 	SHN_HIRESERVE = 0xffff,
 };
 
-#define	SYMTAB_TAG	0x2
+enum	e_section_type
+{
+	SHT_PROGBITS = 0x1,
+	SHT_SYMTAB = 0x2,
+	SHT_DYNAMIC = 0x6
+};
 
 typedef struct s_sh_info
 {
@@ -91,6 +116,7 @@ typedef struct s_sh_info
 	uint16_t	entry_size;
 	uint16_t	number;
 	uint16_t	section_name_index;
+	uint16_t	symbol_name_index;
 }	t_sh_info;
 
 int	parse_file(char *path, uint8_t flags, int has_to_print_name);

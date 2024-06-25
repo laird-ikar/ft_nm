@@ -6,7 +6,7 @@
 #    By: ***REMOVED*** <***REMOVED***@***REMOVED***>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/24 15:05:38 by ***REMOVED***            #+#    #+#              #
-#    Updated: 2024/01/24 15:09:20 by ***REMOVED***           ###   ########.fr        #
+#    Updated: 2024/01/31 17:13:39 by ***REMOVED***           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,7 +30,7 @@ SILENCER		=
 
 CC				=	$(SILENCER)cc
 CFLAGS			=	-Wall -Werror -Wextra $(addprefix -I, $(INCS_DIR) $(addprefix $(LIBS_DIR), $(LIBS_INCS_DIR)))
-DEBUG_FLAGS		=	-g3 # -fsanitize=address
+DEBUG_FLAGS		=	-g3
 
 RM				= $(SILENCER)rm -rf
 

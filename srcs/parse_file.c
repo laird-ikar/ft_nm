@@ -6,7 +6,7 @@
 /*   By: ***REMOVED*** <***REMOVED***@***REMOVED***>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 16:55:21 by ***REMOVED***            #+#    #+#             */
-/*   Updated: 2024/01/30 11:55:01 by ***REMOVED***           ###   ########.fr       */
+/*   Updated: 2024/01/31 18:15:58 by ***REMOVED***           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,19 +90,28 @@ char	*get_strtab_elem
 		uint16_t offset,
 		int data_size,
 		char bits,
-		char endian
+		char endian,
+		t_is_symbol is_symbol
 	)
 {
 	char		*ptr;
 	uintptr_t	str_offset;
 	uintptr_t	len;
 
-	ptr = get_data(
-		data,
-		sh_info.offset + sh_info.entry_size * sh_info.section_name_index,
-		sh_info.entry_size,
-		data_size
-	);
+	if (is_symbol)
+			ptr = get_data(
+			data,
+			sh_info.offset + sh_info.entry_size * sh_info.symbol_name_index,
+			sh_info.entry_size,
+			data_size
+		);
+	else
+		ptr = get_data(
+			data,
+			sh_info.offset + sh_info.entry_size * sh_info.section_name_index,
+			sh_info.entry_size,
+			data_size
+		);
 	if (!ptr)
 		return (NULL);
 	if (bits == FT_B64)
@@ -132,53 +141,89 @@ char	select_uplow(char sym, uint8_t bind)
 }
 
 static
-char	generate_symbol(uint8_t info, uint16_t shndx, uint8_t visibility)
+char	generate_symbol(uint8_t info, uint16_t ndx, uint8_t visibility, char *section_name, uint64_t section_flag, uint32_t section_type)
 {
-	uint8_t	symbol_type;
-	uint8_t	symbol_bind;
+	uint8_t	type;
+	uint8_t	bind;
 
-	symbol_type  = info & 0xf;
-	symbol_bind  = info >> 4;
-
-	ft_printf("type:%x bind:%x ndx:%x :::::: ", symbol_type, symbol_bind, shndx);
-
-	if (shndx == SHN_ABS)
-		return select_uplow('A', symbol_bind);
-	if (symbol_type == STT_OBJECT && (shndx == SHN_UNDEF))
-		return select_uplow('B', symbol_bind);
-	if (symbol_type == STT_OBJECT && shndx == SHN_COMMON)
-		return select_uplow('C', symbol_bind);
-	if (symbol_type == STT_OBJECT && shndx != SHN_UNDEF &&
-			shndx != SHN_COMMON)
-		return select_uplow('D', symbol_bind);
-	if (symbol_type == STT_FUNC && shndx != SHN_UNDEF &&
-			shndx != SHN_COMMON)
-		return 'T';
-	if (symbol_bind == STB_WEAK && symbol_type == STT_OBJECT &&
-		(shndx == SHN_UNDEF || shndx == SHN_COMMON))
+	type = info & 0xf;
+	bind = info >> 4;
+	if (bind == STB_WEAK && type == STT_OBJECT &&
+		(ndx == SHN_UNDEF || ndx == SHN_COMMON))
 		return 'V';
-	if (symbol_bind == STB_WEAK && symbol_type == STT_OBJECT)
+	if (bind == STB_WEAK && type == STT_OBJECT)
 		return 'v';
-	if (symbol_bind == STB_WEAK && (shndx == SHN_UNDEF || shndx == SHN_COMMON))
+	if (bind == STB_WEAK && (ndx == SHN_UNDEF || ndx == SHN_COMMON))
 		return 'w';
-	if (symbol_bind == STB_WEAK)
+	if (bind == STB_WEAK)
 		return 'W';
-	if (shndx == SHN_UNDEF)
+	if (ndx == SHN_UNDEF)
 		return 'U';
+	if (ndx == SHN_ABS)
+		return select_uplow('A', bind);
+	if (!ft_strcmp(".bss", section_name))
+		return select_uplow('B', bind);
+	if (type == STT_COMMON)
+		return select_uplow('C', bind);
+	if (!ft_strcmp(".text", section_name) || !ft_strcmp(".init", section_name) || !ft_strcmp(".fini", section_name))
+		return select_uplow('T', bind);
+	if (!(section_flag & 0x1))
+		return select_uplow('R', bind);
+	if (!ft_strcmp(".sbss", section_name))
+		return select_uplow('G', bind);
+	if ((section_type & SHT_PROGBITS) || (section_type & SHT_DYNAMIC))
+		return select_uplow('D', bind);
 	return '?';
 	(void) visibility;
+}
+
+static
+t_symbol_array	init_symbol_array(void)
+{
+	t_symbol_array	ret;
+
+	ret.allocated = 8;
+	ret.size = 0;
+	ret.array = ft_calloc(8, sizeof (t_symbol));
+	return (ret);
+}
+
+static
+void	add_symbol(char *name, char symbol, uint64_t value, t_symbol_array array)
+{
+	t_symbol	*tmp;
+
+	if (array.size == array.allocated)
+	{
+		tmp =  ft_calloc(array.allocated * 2, sizeof (t_symbol));
+		ft_memmove(tmp, array.array, sizeof(t_symbol) * array.size);
+		free(array.array);
+		array.array = tmp;
+		array.allocated *= 2;
+	}
+	array.array[array.size].name = name;
+	array.array[array.size].symbol = symbol;
+	array.array[array.size++].value = value;
+}
+
+static
+void	print_symbols(t_symbol_array array,uint8_t flags, int has_to_print_name)
+{
+	//todo:
 }
 
 int	parse_file(char *path, uint8_t flags, int has_to_print_name)
 // TODO: refacto that shit
 {
-	char		*data;
-	int			data_size;
-	char		endian;
-	char		bits;
-	t_sh_info	sh_infos;
+	char			*data;
+	int				data_size;
+	char			endian;
+	char			bits;
+	t_sh_info		section_table_info;
+	t_symbol_array	symbol_array;
 
 	data_size = load_file(path, &data);
+	symbol_array = init_symbol_array();
 	if (data_size < 0)
 		return (1);
 	if (ft_memcmp(data, "\x7f""ELF", 4))
@@ -188,23 +233,23 @@ int	parse_file(char *path, uint8_t flags, int has_to_print_name)
 	}
 	bits = get_data(data, 0x04, 1, data_size)[0];
 	endian = get_data(data, 0x05, 1, data_size)[0];
-	sh_infos = get_section_header_infos(data, data_size, bits, endian);
-	if (sh_infos.error_code < 0)
+	section_table_info = get_section_header_infos(data, data_size, bits, endian);
+	if (section_table_info.error_code < 0)
 	{
 		// TODO: check this type of error with true nm
 		ft_printf("nm: %s: Improper file format\n", path);
 		return (1);
 	}
-	while (--(sh_infos.number))
+	while (--(section_table_info.number))
 	{
-		char *ptr = get_data(data, sh_infos.current_offset, sh_infos.entry_size, data_size);
+		char *ptr = get_data(data, section_table_info.current_offset, section_table_info.entry_size, data_size);
 		if (!ptr)
 		{
 			// TODO: check this type of error with true nm
 			ft_printf("nm: %s: Improper file format\n", path);
 			return (1);
 		}
-		if (read_uint32(ptr + 0x04, endian) == SYMTAB_TAG)
+		if (read_uint32(ptr + 0x04, endian) == SHT_SYMTAB)
 		{
 			uint64_t	symtab_offset;
 			uint64_t	symtab_size;
@@ -226,9 +271,9 @@ int	parse_file(char *path, uint8_t flags, int has_to_print_name)
 				symtab_entrysize = read_uint32(ptr + 0x24, endian);
 				link = read_uint32(ptr + 0x18, endian);
 			}
-			ft_printf("offset: %p, size: %p, entry_size: %p\n", (void *) symtab_offset, (void *) symtab_size, (void *) symtab_entrysize);
-			ptr = get_data(data, symtab_offset, symtab_size, data_size);
-			if (!ptr)
+			section_table_info.symbol_name_index = link;
+			char *ptr_symbol = get_data(data, symtab_offset, symtab_size, data_size);
+			if (!ptr_symbol)
 			{
 				// TODO: check this type of error with true nm
 				ft_printf("nm: %s: Improper file format\n", path);
@@ -237,24 +282,37 @@ int	parse_file(char *path, uint8_t flags, int has_to_print_name)
 			nb_entry = symtab_size / symtab_entrysize;
 			while (--nb_entry)
 			{
-				ptr += symtab_entrysize;
-				uint64_t	value = read_uint64(ptr + 0x08, endian);
-				char		*name = get_strtab_elem(data, sh_infos, read_uint32(ptr, endian), data_size, bits, endian);
-				uint8_t		info = *(ptr + 0x04);
-				uint8_t		visibility = *(ptr + 0x5);
-				uint16_t	shndx = read_uint16(ptr + 0x06, endian);
-				char		symbol = generate_symbol(info, shndx, visibility);
+				ptr_symbol += symtab_entrysize;
+				uint64_t	value = read_uint64(ptr_symbol + 0x08, endian);
+				char		*name = get_strtab_elem(data, section_table_info, read_uint32(ptr_symbol, endian), data_size, bits, endian, IS_SYMBOL);
+				uint8_t		symbol_info = *(ptr_symbol + 0x04);
+				uint8_t		visibility = *(ptr_symbol + 0x5);
+				uint16_t	shndx = read_uint16(ptr_symbol + 0x06, endian);
+				char		*offset_ptr = get_data(data, section_table_info.offset + shndx * section_table_info.entry_size, section_table_info.entry_size, data_size);
+				char		*section_name = "";
+				uint64_t	section_flag = 0;
+				uint32_t	section_type = 0;
+				if (offset_ptr)
+				{
+					section_name = get_strtab_elem(data, section_table_info, read_uint32(offset_ptr, endian), data_size, bits, endian, IS_SECTION);
+					section_flag = read_uint64(offset_ptr + 0x08, endian);
+					section_type = read_uint32(offset_ptr + 0x04, endian);
+				}
+				char		symbol = generate_symbol(symbol_info, shndx, visibility, section_name, section_flag, section_type);
 
 
 				// TODO: change direct print for a storage: need to sort and filter that shit
-				sh_infos.section_name_index = link;
-				ft_printf("%016lx %c %s\n", value, symbol, name);
+				if (symbol == 'U' || symbol == 'V' || symbol == 'u' || symbol == 'v' || symbol == 'w')
+					ft_printf("%16s %c %s\n", "", symbol, name);
+				else
+					ft_printf("%016lx %c %s\n", value, symbol, name);
+				add_symbol(name, symbol, value, symbol_array);
 			}
 		}
-		sh_infos.current_offset += sh_infos.entry_size;
+		section_table_info.current_offset += section_table_info.entry_size;
 	}
+	print_symbols(symbol_array, flags, has_to_print_name);
 	munmap(data, data_size);
+	free(symbol_array.array);
 	return (0);
-	(void) flags;
-	(void) has_to_print_name;
 }
