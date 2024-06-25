@@ -6,7 +6,7 @@
 /*   By: ***REMOVED*** <***REMOVED***@***REMOVED***>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/05 10:35:19 by stage             #+#    #+#             */
-/*   Updated: 2024/06/20 16:26:25 by ***REMOVED***           ###   ########.fr       */
+/*   Updated: 2024/06/20 16:39:09 by ***REMOVED***           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,11 @@ t_file	load_file(char *path)
 	if (fstat(fd, &file_stats) < 0)
 		return load_file_error("ft_nm: fstat: ", path, FSTAT_ERROR);
 	file.size = file_stats.st_size;
+	if (file.size == 0)
+	{
+		file.status = EMPTY_FILE;
+		return file;
+	}
 	file.raw_data = mmap(0, file.size, PROT_READ, MAP_PRIVATE, fd, 0);
 	if (file.raw_data == MAP_FAILED)
 		return(load_file_error("ft_nm: mmap: ", path, MMAP_ERROR));

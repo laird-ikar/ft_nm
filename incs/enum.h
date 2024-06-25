@@ -6,7 +6,7 @@
 /*   By: ***REMOVED*** <***REMOVED***@***REMOVED***>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 13:46:25 by ***REMOVED***            #+#    #+#             */
-/*   Updated: 2024/06/20 16:26:11 by ***REMOVED***           ###   ########.fr       */
+/*   Updated: 2024/06/20 16:39:32 by ***REMOVED***           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ typedef enum e_error_codes {
 	OPEN_ERROR,
 	MMAP_ERROR,
 	MALFORMED_FILE,
+	EMPTY_FILE,
 }	t_error_code;
 
 enum e_ei_class {
