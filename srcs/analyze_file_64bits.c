@@ -6,7 +6,7 @@
 /*   By: ***REMOVED*** <***REMOVED***@***REMOVED***>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/21 11:39:09 by ***REMOVED***            #+#    #+#             */
-/*   Updated: 2024/06/21 15:40:50 by ***REMOVED***           ###   ########.fr       */
+/*   Updated: 2024/06/21 16:17:02 by ***REMOVED***           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,11 +90,8 @@ void	load_symbols(t_nm *nm)
 
 	nb_sections = nm->elf.header._64bits.shnum;
 	i = 0;
-	ft_printf("nb_sections: %d\n", nb_sections);
 	while (i < nb_sections)
 	{
-		ft_printf("section %d\n", i);
-		ft_printf("nm elf sections %p\n", nm->elf.sections);
 		if (nm->elf.sections[i]._64bits.type == SHT_SYMTAB)
 		{
 			if (nm->elf.sections[i]._64bits.offset + nm->elf.sections[i]._64bits.size > nm->file.size)
@@ -274,12 +271,21 @@ void cleanup(t_nm *nm)
 	munmap(nm->file.raw_data, nm->file.size);
 }
 
-void	analyze_file_64bits(t_nm *nm)
+int	analyze_file_64bits(t_nm *nm, char *file_path)
 {
 	load_sections(nm);
 	if (nm->file.status != SUCCESS)
-		return ;
+	{
+		ft_putstr_fd("ft_nm: ", STDIN_FILENO);
+		ft_putstr_fd(nm->input.files.data[0], STDIN_FILENO);
+		ft_putstr_fd(": file format not recognized\n", STDIN_FILENO);
+		munmap(nm->file.raw_data, nm->file.size);
+		return 1;
+	}
 	load_symbols(nm);
 	print_symbols(nm);
+	if (nm->input.files.nb_elem > 1)
+		ft_printf("\n%s:\n", file_path);
 	cleanup(nm);
+	return 0;
 }

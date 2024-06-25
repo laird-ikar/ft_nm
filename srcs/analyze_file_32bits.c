@@ -6,7 +6,7 @@
 /*   By: ***REMOVED*** <***REMOVED***@***REMOVED***>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/21 12:16:57 by ***REMOVED***            #+#    #+#             */
-/*   Updated: 2024/06/21 15:11:21 by ***REMOVED***           ###   ########.fr       */
+/*   Updated: 2024/06/21 16:30:55 by ***REMOVED***           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,11 @@ void	load_sections(t_nm *nm)
 		return ;
 	}
 	nm->elf.sections = ft_calloc(nm->elf.header._32bits.shnum, sizeof (t_section));
+	if (nm->elf.sections == NULL)
+	{
+		nm->file.status = MALLOC_ERROR;
+		return ;
+	}
 	i = 0;
 	while (i < nm->elf.header._32bits.shnum)
 	{
@@ -104,6 +109,7 @@ void	load_symbols(t_nm *nm)
 						+ ii * nm->elf.sections[i]._32bits.entsize,
 					nm->elf.sections[i]._32bits.entsize
 				);
+				ft_printf("apres shndx: %d\n", nm->elf.sections[i].symbols[ii]._32bits.shndx);
 				nm->elf.sections[i].symbols[ii].name
 					= load_name(
 						nm, nm->elf.sections[i].symbols[ii]._32bits.name,
@@ -159,6 +165,7 @@ void	print_symbols(t_nm *nm)
 		quick_sort(symbols, 0, total_symbols - 1, compare);
 	// TODO: filter symbols
 	i = 1;
+	ft_printf("total_symbols: %d\n", total_symbols);
 	while (i < total_symbols)
 	{
 		if (!symbols[i].should_skip)
@@ -214,6 +221,9 @@ void	print_symbols(t_nm *nm)
 			else if (shndx == SHN_UNDEF)
 				c = 'U';
 			else {
+				ft_printf("shndx: %x\n", shndx);
+				ft_printf("symbol name: %s\n", symbols[i].name);
+				ft_printf("symbol value: %x\n", symbols[i]._32bits.value);
 				uint32_t section_type = nm->elf.sections[shndx]._32bits.type;
 				if (section_type == SHT_NOBITS)
 					c = 'B';
@@ -266,10 +276,21 @@ void cleanup(t_nm *nm)
 	munmap(nm->file.raw_data, nm->file.size);
 }
 
-void	analyze_file_32bits(t_nm *nm)
+int	analyze_file_32bits(t_nm *nm, char *file_path)
 {
 	load_sections(nm);
+	if (nm->file.status != SUCCESS)
+	{
+		ft_putstr_fd("ft_nm: ", STDIN_FILENO);
+		ft_putstr_fd(nm->input.files.data[0], STDIN_FILENO);
+		ft_putstr_fd(": file format not recognized\n", STDIN_FILENO);
+		munmap(nm->file.raw_data, nm->file.size);
+		return 1;
+	}
 	load_symbols(nm);
 	print_symbols(nm);
+	if (nm->input.files.nb_elem > 1)
+		ft_printf("\n%s:\n", file_path);
 	cleanup(nm);
+	return 0;
 }

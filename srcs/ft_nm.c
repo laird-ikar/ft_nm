@@ -6,7 +6,7 @@
 /*   By: ***REMOVED*** <***REMOVED***@***REMOVED***>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/01 15:42:04 by ***REMOVED***            #+#    #+#             */
-/*   Updated: 2024/06/13 16:48:56 by ***REMOVED***           ###   ########.fr       */
+/*   Updated: 2024/06/21 15:50:18 by ***REMOVED***           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,9 @@ int	main(int argc, char *argv[])
 {
 	t_nm	nm;
 	int		i;
+	int		ret;
 
+	ret = 0;
 	nm = init();
 	nm.input = parse_input(argc, argv, nm);
 	#ifdef FT_DEBUG_MODE
@@ -53,9 +55,9 @@ int	main(int argc, char *argv[])
 		i = 0;
 		while (i < nm.input.files.nb_elem)
 		{
-			analyze_file(nm.input.files.data[i++], nm);
+			ret += analyze_file(nm.input.files.data[i++], nm);
 		}
 	}
 	tini(nm);
-	return (0);
+	return (ret);
 }

@@ -6,7 +6,7 @@
 /*   By: ***REMOVED*** <***REMOVED***@***REMOVED***>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/05 10:35:19 by stage             #+#    #+#             */
-/*   Updated: 2024/06/21 14:03:53 by ***REMOVED***           ###   ########.fr       */
+/*   Updated: 2024/06/21 16:07:25 by ***REMOVED***           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,24 +78,29 @@ void	load_elf_header(t_nm *nm)
 		nm->file.status = MALFORMED_FILE;
 }
 
-void	analyze_file(char *file_path, t_nm nm)
+int	analyze_file(char *file_path, t_nm nm)
 {
 	nm.file = load_file(file_path);
 	if (nm.file.status != SUCCESS)
-		return ;
-	if (nm.input.files.nb_elem > 1)
-		ft_printf("\n%s:\n", file_path);
+		return 1;
 	load_elf_header(&nm);
 	if (nm.file.status != SUCCESS)
 	{
 		ft_putstr_fd("ft_nm: ", STDIN_FILENO);
 		ft_putstr_fd(file_path, STDIN_FILENO);
-		ft_putstr_fd(": File format not recognized\n", STDIN_FILENO);
+		ft_putstr_fd(": file format not recognized\n", STDIN_FILENO);
 		munmap(nm.file.raw_data, nm.file.size);
-		return ;
+		return 1;
 	}
 	if (nm.elf.header.indent.class == EI_CLASS_32BIT)
-		analyze_file_32bits(&nm);
-	else
-		analyze_file_64bits(&nm);
+		return analyze_file_32bits(&nm, file_path);
+	else if (nm.elf.header.indent.class == EI_CLASS_64BIT)
+		return analyze_file_64bits(&nm, file_path);
+	else {
+		ft_putstr_fd("ft_nm: ", STDIN_FILENO);
+		ft_putstr_fd(file_path, STDIN_FILENO);
+		ft_putstr_fd(": file format not recognized\n", STDIN_FILENO);
+		munmap(nm.file.raw_data, nm.file.size);
+		return 1;
+	}
 }

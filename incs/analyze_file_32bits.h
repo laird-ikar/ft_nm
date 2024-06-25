@@ -6,7 +6,7 @@
 /*   By: ***REMOVED*** <***REMOVED***@***REMOVED***>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/21 12:17:40 by ***REMOVED***            #+#    #+#             */
-/*   Updated: 2024/06/21 14:04:37 by ***REMOVED***           ###   ########.fr       */
+/*   Updated: 2024/06/21 16:07:09 by ***REMOVED***           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,6 @@
 # include <fcntl.h>
 # include <stdio.h>
 
-void	analyze_file_32bits(t_nm *nm);
+int	analyze_file_32bits(t_nm *nm, char *file_path);
 
 #endif

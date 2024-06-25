@@ -6,7 +6,7 @@
 /*   By: ***REMOVED*** <***REMOVED***@***REMOVED***>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/05 10:36:13 by stage             #+#    #+#             */
-/*   Updated: 2024/06/21 14:04:32 by ***REMOVED***           ###   ########.fr       */
+/*   Updated: 2024/06/21 15:47:34 by ***REMOVED***           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,6 @@
 # include <analyze_file_32bits.h>
 # include <analyze_file_64bits.h>
 
-void	analyze_file(char *file_path, t_nm nm);
+int	analyze_file(char *file_path, t_nm nm);
 
 #endif
