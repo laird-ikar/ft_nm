@@ -1,24 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   analyze_file.h                                     :+:      :+:    :+:   */
+/*   analyze_file_64bits.h                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ***REMOVED*** <***REMOVED***@***REMOVED***>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/06/05 10:36:13 by stage             #+#    #+#             */
-/*   Updated: 2024/06/21 14:04:32 by ***REMOVED***           ###   ########.fr       */
+/*   Created: 2024/06/21 11:40:25 by ***REMOVED***            #+#    #+#             */
+/*   Updated: 2024/06/21 14:04:41 by ***REMOVED***           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef ANALYZE_FILE_H
-# define ANALYZE_FILE_H
+#ifndef ANALYZE_FILE_64BITS_H
+# define ANALYZE_FILE_64BITS_H
 
 # include <struct.h>
-# include <libft.h>
 # include <enum.h>
-# include <analyze_file_32bits.h>
-# include <analyze_file_64bits.h>
+# include <libft.h>
+# include <quick_sort.h>
 
-void	analyze_file(char *file_path, t_nm nm);
+# include <sys/mman.h>
+# include <sys/stat.h>
+# include <fcntl.h>
+# include <stdio.h>
+
+void	analyze_file_64bits(t_nm *nm);
 
 #endif

@@ -1,24 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   analyze_file.h                                     :+:      :+:    :+:   */
+/*   quick_sort.h                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ***REMOVED*** <***REMOVED***@***REMOVED***>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/06/05 10:36:13 by stage             #+#    #+#             */
-/*   Updated: 2024/06/21 14:04:32 by ***REMOVED***           ###   ########.fr       */
+/*   Created: 2024/06/21 14:00:34 by ***REMOVED***            #+#    #+#             */
+/*   Updated: 2024/06/21 14:01:21 by ***REMOVED***           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef ANALYZE_FILE_H
-# define ANALYZE_FILE_H
+#ifndef QUICK_SORT_H
+# define QUICK_SORT_H
 
-# include <struct.h>
-# include <libft.h>
 # include <enum.h>
-# include <analyze_file_32bits.h>
-# include <analyze_file_64bits.h>
+# include <struct.h>
 
-void	analyze_file(char *file_path, t_nm nm);
+void quick_sort(t_symbol *symbols, int low, int high, int (*f_comp)(t_symbol, t_symbol));
 
 #endif

@@ -6,7 +6,7 @@
 #    By: ***REMOVED*** <***REMOVED***@***REMOVED***>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/24 15:05:38 by ***REMOVED***            #+#    #+#              #
-#    Updated: 2024/06/13 17:16:11 by ***REMOVED***           ###   ########.fr        #
+#    Updated: 2024/06/21 14:05:53 by ***REMOVED***           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,8 +17,9 @@ INCS_DIR		=	incs/
 LIBS_DIR		=
 LIBS_INCS_DIR	=	libft/
 
-SOURCES			=	analyze_file	ft_error	init		print_help			\
-					array_2d		ft_nm		parse_input
+SOURCES			=	analyze_file		ft_error	init		print_help		\
+					array_2d			ft_nm		quick_sort					\
+					parse_input	analyze_file_32bits	analyze_file_64bits
 INCLUDES		=	struct	enum
 LIBRARIES		=	libft
 
