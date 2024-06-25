@@ -6,7 +6,7 @@
 /*   By: ***REMOVED*** <***REMOVED***@***REMOVED***>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/05 10:35:19 by stage             #+#    #+#             */
-/*   Updated: 2024/06/14 16:52:20 by ***REMOVED***           ###   ########.fr       */
+/*   Updated: 2024/06/14 18:05:48 by ***REMOVED***           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -319,7 +319,30 @@ void	print_symbols_64bits(t_nm *nm)
 	{
 		if (!symbols[i].should_skip)
 		{
-			ft_printf("%016lx %c %s\n", symbols[i]._64bits.value, '?', symbols[i].name);
+			char		symbol_type;
+			char		symbol_bind;
+			char		symbol_visibility;
+			uint16_t	shndx;
+			char		c;
+			char		*section_name;
+
+			symbol_type = symbols[i]._64bits.info & 0xf;
+			symbol_bind = symbols[i]._64bits.info >> 4;
+			symbol_visibility = symbols[i]._64bits.other & 0x3;
+			shndx = symbols[i]._64bits.shndx;
+			section_name = load_name(nm, nm->elf.sections[shndx]._64bits.name, nm->elf.sections[nm->elf.header._64bits.shstrndx]._64bits.offset);
+			c = '?';
+			if (shndx == SHN_ABS)
+				c = 'A';
+			else if (!ft_strcmp(".bbs", section_name))
+			{
+				if (symbol_visibility == STV_INTERNAL)
+					c = 'b';
+				else
+					c = 'B';
+			}
+			ft_printf("ALL SYMBOLS VALUES: type: %d, bind: %d, visibility: %d\n, shndx: %d\n", symbol_type, symbol_bind, symbol_visibility, symbols[i]._64bits.shndx);
+			ft_printf("%016lx %c %s\n", symbols[i]._64bits.value, c, symbols[i].name);
 		}
 		i++;
 	}
