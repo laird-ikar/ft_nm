@@ -6,7 +6,7 @@
 /*   By: ***REMOVED*** <***REMOVED***@***REMOVED***>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/01 15:57:40 by ***REMOVED***            #+#    #+#             */
-/*   Updated: 2024/06/12 17:06:02 by ***REMOVED***           ###   ########.fr       */
+/*   Updated: 2024/06/13 16:45:55 by ***REMOVED***           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,8 +90,42 @@ typedef struct s_header {
 	};
 }	t_header;
 
+typedef struct s_64bits_section {
+	uint32_t	name;
+	uint32_t	type;
+	uint64_t	flags;
+	uint64_t	addr;
+	uint64_t	offset;
+	uint64_t	size;
+	uint32_t	link;
+	uint32_t	info;
+	uint64_t	addralign;
+	uint64_t	entsize;
+}	t_64bits_section;
+
+typedef struct s_32bits_section {
+	uint32_t	name;
+	uint32_t	type;
+	uint32_t	flags;
+	uint32_t	addr;
+	uint32_t	offset;
+	uint32_t	size;
+	uint32_t	link;
+	uint32_t	info;
+	uint32_t	addralign;
+	uint32_t	entsize;
+}	t_32bits_section;
+
+typedef struct s_section {
+	union {
+		t_32bits_section	_32bits;
+		t_64bits_section	_64bits;
+	};
+}	t_section;
+
 typedef struct s_elf {
 	t_header	header;
+	t_section	*sections;
 }	t_elf;
 
 typedef struct s_nm {

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_nm.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stage <***REMOVED***@***REMOVED***>       +#+  +:+       +#+        */
+/*   By: ***REMOVED*** <***REMOVED***@***REMOVED***>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/01 15:42:04 by ***REMOVED***            #+#    #+#             */
-/*   Updated: 2024/06/05 11:01:25 by stage            ###   ########.fr       */
+/*   Updated: 2024/06/13 16:48:56 by ***REMOVED***           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ static void debug(t_nm nm)
 	ft_printf("reverse_sort: %d, ", nm.input.reverse_sort);
 	ft_printf("no_sort: %d, ", nm.input.no_sort);
 	ft_printf("help: %d\n", nm.input.help);
-	ft_printf("%d FILES: ", nm.input.files.nb_elem);
+	ft_printf("%d FILE(S): ", nm.input.files.nb_elem);
 	i = 0;
 	while (i < nm.input.files.nb_elem)
 	{

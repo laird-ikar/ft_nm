@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: stage <***REMOVED***@***REMOVED***>       +#+  +:+       +#+         #
+#    By: ***REMOVED*** <***REMOVED***@***REMOVED***>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/24 15:05:38 by ***REMOVED***            #+#    #+#              #
-#    Updated: 2024/06/05 10:58:36 by stage            ###   ########.fr        #
+#    Updated: 2024/06/13 17:16:11 by ***REMOVED***           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -31,7 +31,7 @@ SILENCER		=	@
 
 CC				=	$(SILENCER)/bin/cc
 CFLAGS			=	-Wall -Werror -Wextra $(addprefix -I, $(INCS_DIR) $(addprefix $(LIBS_DIR), $(LIBS_INCS_DIR)))
-DEBUG_FLAGS		=	-g -D FT_DEBUG_MODE -fsanitize=address
+DEBUG_FLAGS		=	-g3 -D FT_DEBUG_MODE -fsanitize=address
 
 RM				= $(SILENCER)/bin/rm -rf
 
