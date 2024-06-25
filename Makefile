@@ -5,35 +5,37 @@ INCS_DIR	=	incs/
 LIBS_DIR	=	libs/
 
 SOURCES		=
-HEADERS		=
-LIBRARIES	=
+LIBRARIES	=	libft
 
-LIBS		=
-SRCS		=
-OBJS		=
+LIBS		= $(foreach lib, $(LIBRARIES), $(LIBS_DIR)$(lib)/$(lib).a)
+SRCS		= $(addprefix $(SRCS_DIR), $(addsuffix .c, $(SOURCES)))
+OBJS		= $(SRCS:.c=.o)
 
 SILENCER	=
 
 CC			=	$(SILENCER)cc
-CFLAGS		=
+CFLAGS		=	-I $(LIBS_DIR)
 
 RM			= $(SILENCER)rm -rf
 
 all:		$(NAME)
 
 clean:
-	$(foreach path, $(LIBRARIES), make -C $(LIBS_DIR)$(path) clean ;)
+	$(foreach path, $(LIBRARIES), $(MAKE) -C $(LIBS_DIR)$(path) clean ;)
 	$(RM) $(OBJS)
 
 fclean: clean
 	$(RM) $(NAME)
 
-re: fclean all
+re: 		fclean all
 
 $(NAME):	$(OBJS) $(LIBS)
 	$(CC) $(CFLAGS) $^ -o $@
 
-%.c:		%.o
-	$(CC) $(CFLAGS) $^ -o $@
+libs/libft/libft.a:
+	$(MAKE) -C libs/libft
+
+%.o:		%.c
+	$(CC) $(CFLAGS) $^ -c -o $@
 
 .PHONY: all clean fclean re
