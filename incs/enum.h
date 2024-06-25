@@ -6,7 +6,7 @@
 /*   By: stage <***REMOVED***@***REMOVED***>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 13:46:25 by ***REMOVED***            #+#    #+#             */
-/*   Updated: 2024/06/05 10:46:41 by stage            ###   ########.fr       */
+/*   Updated: 2024/06/05 11:25:31 by stage            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,9 @@ typedef enum e_error_codes {
 	SUCCESS,
 	INVALID_FLAG,
 	FAILED_ALLOCATION,
+	FSTAT_ERROR,
+	OPEN_ERROR,
+	MMAP_ERROR,
 }	t_error_code;
 
 #endif

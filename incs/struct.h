@@ -3,15 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   struct.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ***REMOVED*** <***REMOVED***@***REMOVED***>      +#+  +:+       +#+        */
+/*   By: stage <***REMOVED***@***REMOVED***>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/01 15:57:40 by ***REMOVED***            #+#    #+#             */
-/*   Updated: 2024/05/02 13:55:01 by ***REMOVED***           ###   ########.fr       */
+/*   Updated: 2024/06/05 11:31:23 by stage            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef STRUCT_H
 # define STRUCT_H
+
+# include <enum.h>
 
 typedef struct s_array_2d
 {
@@ -30,7 +32,14 @@ typedef struct s_input {
 	t_array_2d	files;
 }	t_input;
 
+typedef struct s_file {
+	char			*raw_data;
+	int				size;
+	t_error_code	status;
+}	t_file;
+
 typedef struct s_nm {
+	t_file	file;
 	t_input	input;
 }	t_nm;
 
