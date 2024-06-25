@@ -6,7 +6,7 @@
 /*   By: ***REMOVED*** <***REMOVED***@***REMOVED***>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 13:46:25 by ***REMOVED***            #+#    #+#             */
-/*   Updated: 2024/06/14 17:42:52 by ***REMOVED***           ###   ########.fr       */
+/*   Updated: 2024/06/20 16:26:11 by ***REMOVED***           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,11 @@ enum e_ei_class {
 };
 
 enum e_sh_type {
+	SHT_NULL = 0,
+	SHT_PROGBITS = 1,
 	SHT_SYMTAB = 0x2,
+	SHT_NOTE = 0x07,
+	SHT_NOBITS = 0x8,
 	SHT_DYNSYM = 0xB,
 };
 
@@ -53,6 +57,21 @@ enum e_stb {
 	STB_HIOS = 12,
 	STB_LOPROC = 13,
 	STB_HIPROC = 15,
+};
+
+enum e_shf {
+	SHF_WRITE = 0x1,
+	SHF_ALLOC = 0x2,
+	SHF_EXECINSTR = 0x4,
+	SHF_MERGE = 0x10,
+	SHF_STRINGS = 0x20,
+	SHF_INFO_LINK = 0x40,
+	SHF_LINK_ORDER = 0x80,
+	SHF_OS_NONCONFORMING = 0x100,
+	SHF_GROUP = 0x200,
+	SHF_TLS = 0x400,
+	SHF_MASKOS = 0x0FF00000,
+	SHF_MASKPROC = 0xF0000000,
 };
 
 enum e_stt {

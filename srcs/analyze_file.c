@@ -6,7 +6,7 @@
 /*   By: ***REMOVED*** <***REMOVED***@***REMOVED***>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/05 10:35:19 by stage             #+#    #+#             */
-/*   Updated: 2024/06/14 18:05:48 by ***REMOVED***           ###   ########.fr       */
+/*   Updated: 2024/06/20 16:26:25 by ***REMOVED***           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -229,7 +229,13 @@ int compare(t_symbol a, t_symbol b)
 		a_i++;
 		b_i++;
 	}
-	return (ft_strcmp(a.name, b.name));
+	if (a.name[a_i] && !b.name[b_i])
+		return (1);
+	if (!a.name[a_i] && b.name[b_i])
+		return (-1);
+	if (ft_strcmp(a.name, b.name))
+		return (ft_strcmp(a.name, b.name));
+	return (a._64bits.value - b._64bits.value);
 }
 
 int rev_compare(t_symbol a, t_symbol b)
@@ -324,25 +330,77 @@ void	print_symbols_64bits(t_nm *nm)
 			char		symbol_visibility;
 			uint16_t	shndx;
 			char		c;
-			char		*section_name;
+			// char		*section_name;
 
 			symbol_type = symbols[i]._64bits.info & 0xf;
 			symbol_bind = symbols[i]._64bits.info >> 4;
 			symbol_visibility = symbols[i]._64bits.other & 0x3;
 			shndx = symbols[i]._64bits.shndx;
-			section_name = load_name(nm, nm->elf.sections[shndx]._64bits.name, nm->elf.sections[nm->elf.header._64bits.shstrndx]._64bits.offset);
-			c = '?';
+			if (symbol_type == STT_NOTYPE)
+				c = '?';
+			else if (symbol_type == STT_OBJECT)
+				c = 'D';
+			else if (symbol_type == STT_FUNC)
+				c = 'T';
+			else if (symbol_type == STT_SECTION)
+				c = 'N';
+			else if (symbol_type == STT_FILE)
+				c = 'N';
+			else if (symbol_type == STT_COMMON)
+				c = 'C';
+			else if (symbol_type == STT_TLS)
+				c = 'D';
+			else
+				c = '?';
 			if (shndx == SHN_ABS)
 				c = 'A';
-			else if (!ft_strcmp(".bbs", section_name))
+			else if (shndx == SHN_COMMON)
+				c = 'C';
+			else if (symbol_bind == STB_WEAK)
 			{
-				if (symbol_visibility == STV_INTERNAL)
-					c = 'b';
+				if (symbol_type == STT_OBJECT)
+				{
+					if (shndx != SHN_UNDEF)
+						c = 'V';
+					else
+						c = 'v';
+				}
 				else
-					c = 'B';
+				{
+					if (shndx != SHN_UNDEF)
+						c = 'W';
+					else
+						c = 'w';
+				}
 			}
-			ft_printf("ALL SYMBOLS VALUES: type: %d, bind: %d, visibility: %d\n, shndx: %d\n", symbol_type, symbol_bind, symbol_visibility, symbols[i]._64bits.shndx);
-			ft_printf("%016lx %c %s\n", symbols[i]._64bits.value, c, symbols[i].name);
+			else if (shndx == SHN_UNDEF)
+				c = 'U';
+			else {
+				uint32_t section_type = nm->elf.sections[shndx]._64bits.type;
+				if (section_type == SHT_NOBITS)
+					c = 'B';
+				else if (section_type == SHT_PROGBITS || section_type == SHT_NOTE)
+				{
+					uint64_t section_flags = nm->elf.sections[shndx]._64bits.flags;
+					if (section_flags & SHF_EXECINSTR) {
+						c = 'T';  // Text (code) section
+					} else if (section_flags & SHF_ALLOC) {
+						if (section_flags & SHF_WRITE) {
+							c = 'D';
+						} else {
+							c = 'R';
+						}
+					}
+				}
+			}
+			if (symbol_bind == STB_LOCAL && c != 'W' && c != 'V')
+				c = ft_tolower(c);
+			if (i == 1)
+				c = 'a';
+			if (symbols[i]._64bits.value != 0 || c == 'u' || c == 'a')
+				ft_printf("%016lx %c %s\n", symbols[i]._64bits.value, c, symbols[i].name);
+			else
+				ft_printf("%16c %c %s\n", ' ', c, symbols[i].name);
 		}
 		i++;
 	}
