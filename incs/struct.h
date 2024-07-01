@@ -6,7 +6,7 @@
 /*   By: yyyyyyyy <yyyyyyyy@42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/01 15:57:40 by yyyyyyyy          #+#    #+#             */
-/*   Updated: 2024/06/25 11:37:47 by yyyyyyyy         ###   ########.fr       */
+/*   Updated: 2024/07/01 11:47:42 by yyyyyyyy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,11 +127,11 @@ typedef struct s_symbol_64bits {
 
 typedef struct s_symbol_32bits {
 	uint32_t	name;
+	uint32_t	value;
+	uint32_t	size;
 	uint8_t		info;
 	uint8_t		other;
 	uint16_t	shndx;
-	uint32_t	value;
-	uint32_t	size;
 } t_symbol_32bits;
 
 typedef struct s_symbol {
@@ -150,6 +150,7 @@ typedef struct s_section {
 		t_64bits_section	_64bits;
 	};
 	t_symbol	*symbols;
+	char		*name;
 }	t_section;
 
 typedef struct s_elf {

@@ -6,7 +6,7 @@
 /*   By: yyyyyyyy <yyyyyyyy@42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/21 11:39:09 by yyyyyyyy          #+#    #+#             */
-/*   Updated: 2024/06/25 11:51:56 by yyyyyyyy         ###   ########.fr       */
+/*   Updated: 2024/07/01 11:56:59 by yyyyyyyy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,7 @@ void	load_sections(t_nm *nm)
 	while (i < nm->elf.header._64bits.shnum)
 	{
 		ft_memcpy(nm->elf.sections + i, nm->file.raw_data + nm->elf.header._64bits.shoff + i * nm->elf.header._64bits.shentsize, nm->elf.header._64bits.shentsize);
+		nm->elf.sections[i].name = load_name(nm, nm->elf.sections[i]._64bits.name, nm->elf.sections[nm->elf.header._64bits.shstrndx]._64bits.offset);
 		i++;
 	}
 }
@@ -90,21 +91,22 @@ char load_type(t_nm *nm, t_symbol sym)
 	char		visibility;
 	uint16_t	shndx;
 	char		c;
-	char		*section_name;
+	t_section	section;
 
 	type = sym._64bits.info & 0xf;
 	bind = sym._64bits.info >> 4;
 	visibility = sym._64bits.other & 0x3;
 	shndx = sym._64bits.shndx;
-	section_name = load_name(
-		nm,
-		nm->elf.sections[sym._64bits.shndx]._64bits.name,
-		nm->elf.sections[nm->elf.header._64bits.shstrndx]._64bits.offset
-	);
+	if (shndx != SHN_UNDEF &&
+		shndx != SHN_LORESERVE &&
+		shndx != SHN_LOPROC &&
+		shndx != SHN_HIPROC &&
+		shndx != SHN_ABS &&
+		shndx != SHN_COMMON &&
+		shndx != SHN_HIRESERVE)
+	section = nm->elf.sections[shndx];
+	c = '?';
 
-	// COMBAK: you need to analyse a shit tone of binaries to get the symbols cleanly
-
-	return c;
 }
 
 static
@@ -199,9 +201,8 @@ void	print_symbols(t_nm *nm)
 		quick_sort(symbols, 0, total_symbols - 1, rev_compare);
 	else
 		quick_sort(symbols, 0, total_symbols - 1, compare);
-	// TODO: filter symbols
-	i = 1;
-	while (i < total_symbols)
+	i = 0;
+	while (++i < total_symbols)
 	{
 		if (!symbols[i].should_skip)
 		{
@@ -211,7 +212,6 @@ void	print_symbols(t_nm *nm)
 			else
 				ft_printf("%16c %c %s\n", ' ', c, symbols[i].name);
 		}
-		i++;
 	}
 	free(symbols);
 }
