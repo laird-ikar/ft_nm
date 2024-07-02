@@ -6,7 +6,7 @@
 /*   By: yyyyyyyy <yyyyyyyy@42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 13:46:25 by yyyyyyyy          #+#    #+#             */
-/*   Updated: 2024/06/25 10:38:05 by yyyyyyyy         ###   ########.fr       */
+/*   Updated: 2024/07/02 11:34:08 by yyyyyyyy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,8 @@ enum e_sh_type {
 	SHT_NOTE = 0x07,
 	SHT_NOBITS = 0x8,
 	SHT_DYNSYM = 0xB,
+	SHT_INIT_ARRAY = 0xE,
+	SHT_FINI_ARRAY = 0xF,
 };
 
 enum e_stv {

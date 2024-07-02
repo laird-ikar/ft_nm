@@ -6,7 +6,7 @@
 /*   By: yyyyyyyy <yyyyyyyy@42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/01 15:42:04 by yyyyyyyy          #+#    #+#             */
-/*   Updated: 2024/06/25 10:38:06 by yyyyyyyy         ###   ########.fr       */
+/*   Updated: 2024/07/02 12:52:44 by yyyyyyyy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,23 +16,23 @@
 static void debug(t_nm nm)
 {
 	int i;
-	ft_printf("\033[1;33m");
-	ft_printf("FLAGS: debug_symbols: %d, ", nm.input.debug_symbols);
-	ft_printf("extern_only: %d, ", nm.input.extern_only);
-	ft_printf("undefined_only: %d, ", nm.input.undefined_only);
-	ft_printf("reverse_sort: %d, ", nm.input.reverse_sort);
-	ft_printf("no_sort: %d, ", nm.input.no_sort);
-	ft_printf("help: %d\n", nm.input.help);
-	ft_printf("%d FILE(S): ", nm.input.files.nb_elem);
+	ft_dprintf(2, "\033[1;33m");
+	ft_dprintf(2, "FLAGS: debug_symbols: %d, ", nm.input.debug_symbols);
+	ft_dprintf(2, "extern_only: %d, ", nm.input.extern_only);
+	ft_dprintf(2, "undefined_only: %d, ", nm.input.undefined_only);
+	ft_dprintf(2, "reverse_sort: %d, ", nm.input.reverse_sort);
+	ft_dprintf(2, "no_sort: %d, ", nm.input.no_sort);
+	ft_dprintf(2, "help: %d\n", nm.input.help);
+	ft_dprintf(2, "%d FILE(S): ", nm.input.files.nb_elem);
 	i = 0;
 	while (i < nm.input.files.nb_elem)
 	{
-		ft_printf("(%d)", i);
-		ft_printf("%s, ", nm.input.files.data[i]);
+		ft_dprintf(2, "(%d)", i);
+		ft_dprintf(2, "%s, ", nm.input.files.data[i]);
 		i++;
 	}
-	ft_printf("\n");
-	ft_printf("\033[0m");
+	ft_dprintf(2, "\n");
+	ft_dprintf(2, "\033[0m");
 }
 #endif
 

@@ -6,7 +6,7 @@
 #    By: yyyyyyyy <yyyyyyyy@42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/24 15:05:38 by yyyyyyyy          #+#    #+#              #
-#    Updated: 2024/06/25 10:38:05 by yyyyyyyy         ###   ########.fr        #
+#    Updated: 2024/07/02 12:51:48 by yyyyyyyy         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -39,7 +39,7 @@ RM				= $(SILENCER)/bin/rm -rf
 all:			$(NAME)
 
 clean:
-	$(foreach path, $(LIBRARIES), $(MAKE) -C $(LIBS_DIR)$(path) clean ;)
+	$(foreach path, $(LIBRARIES), $(MAKE) -C $(LIBS_DIR)$(path) fclean ;)
 	$(RM) $(OBJS)
 
 fclean: clean

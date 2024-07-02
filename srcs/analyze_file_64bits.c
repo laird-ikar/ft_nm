@@ -6,7 +6,7 @@
 /*   By: yyyyyyyy <yyyyyyyy@42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/21 11:39:09 by yyyyyyyy          #+#    #+#             */
-/*   Updated: 2024/07/01 11:56:59 by yyyyyyyy         ###   ########.fr       */
+/*   Updated: 2024/07/02 12:55:21 by yyyyyyyy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,7 +106,38 @@ char load_type(t_nm *nm, t_symbol sym)
 		shndx != SHN_HIRESERVE)
 	section = nm->elf.sections[shndx];
 	c = '?';
-
+	if (bind == STB_WEAK)
+	{
+		if (type == STT_OBJECT)
+		{
+			c = 'V';
+			if (shndx == SHN_UNDEF)
+				c = 'v';
+		}
+		else
+		{
+			c = 'W';
+			if (shndx == SHN_UNDEF)
+				c = 'w';
+		}
+	}
+	else if (shndx == SHN_UNDEF)
+		c = 'U';
+	else if (shndx == SHN_ABS)
+		c = 'a'; // TODO: A or a?
+	else { // Real section and bind is GLOBAL or LOCAL
+		if (section._64bits.type == SHT_NOBITS)
+			c = 'b';
+		else if (section._64bits.flags & SHF_EXECINSTR)
+			c = 't';
+		else if (section._64bits.flags & SHF_WRITE)
+			c = 'd';
+		else if (section._64bits.flags & SHF_ALLOC)
+			c = 'r';
+		if (bind == STB_GLOBAL)
+			c = ft_toupper(c);
+	}
+	return (c);
 }
 
 static
@@ -207,12 +238,14 @@ void	print_symbols(t_nm *nm)
 		if (!symbols[i].should_skip)
 		{
 			char c = symbols[i].type;
-			if ((symbols[i]._64bits.value != 0 || c == 'u' || c == 'a' || c == 'b') && c != 'U')
+			if (symbols[i]._64bits.value != 0 || c == 'u' || c == 'a' || c == 'b' || c != 'U' || c == 't' || c == 'T' || c == 'r')
 				ft_printf("%016lx %c %s\n", symbols[i]._64bits.value, c, symbols[i].name);
 			else
 				ft_printf("%16c %c %s\n", ' ', c, symbols[i].name);
 		}
 	}
+	if (!total_symbols)
+		ft_dprintf(STDIN_FILENO, "ft_nm: %s: no symbols\n", nm->input.files.data[0]);
 	free(symbols);
 }
 
